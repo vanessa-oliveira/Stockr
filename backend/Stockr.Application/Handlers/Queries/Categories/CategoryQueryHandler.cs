@@ -26,7 +26,7 @@ public class CategoryQueryHandler :
 
     public async Task<CategoryViewModel?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        var category = await _categoryRepository.GetWithProductsAsync(request.Id);
+        var category = await _categoryRepository.GetByIdAsync(request.Id);
         return category.Adapt<CategoryViewModel>();
     }
 }
