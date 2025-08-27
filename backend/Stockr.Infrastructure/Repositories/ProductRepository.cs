@@ -6,6 +6,8 @@ namespace Stockr.Infrastructure.Repositories;
 
 public interface IProductRepository : IGenericRepository<Product>
 {
+    new Task<Product?> GetByIdAsync(Guid id);
+    new Task<IEnumerable<Product>> GetAllAsync();
     Task<Product?> GetBySkuAsync(string sku);
     Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId);
     Task<IEnumerable<Product>> GetBySupplierAsync(Guid supplierId);
@@ -16,6 +18,22 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
 {
     public ProductRepository(DataContext context) : base(context)
     {
+    }
+
+    public new async Task<Product?> GetByIdAsync(Guid id)
+    {
+        return await _dbSet.AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public new async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await _dbSet.AsNoTracking()
+            .Include(p => p.Category)
+            .Include(p => p.Supplier)
+            .ToListAsync();
     }
 
     public async Task<Product?> GetBySkuAsync(string sku)
