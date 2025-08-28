@@ -42,13 +42,15 @@ public static class MapsterConfig
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
             .Map(dest => dest.Phone, src => src.Phone)
-            .Ignore(dest => dest.Email)
-            .Ignore(dest => dest.Address);
+            .Map(dest => dest.Active, src => src.Active)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt)
+            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt);
 
         config.NewConfig<SupplierViewModel, Supplier>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
-            .Map(dest => dest.Phone, src => src.Phone);
+            .Map(dest => dest.Phone, src => src.Phone)
+            .Map(dest => dest.Active, src => src.Active);
 
         config.NewConfig<Customer, CustomerViewModel>()
             .Map(dest => dest.Id, src => src.Id)
