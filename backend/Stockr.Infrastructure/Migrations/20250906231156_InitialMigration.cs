@@ -183,8 +183,8 @@ namespace Stockr.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SalesPersonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     SaleStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     SaleDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -210,8 +210,8 @@ namespace Stockr.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Sales_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Sales_Users_SalesPersonId",
+                        column: x => x.SalesPersonId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -403,14 +403,14 @@ namespace Stockr.Infrastructure.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Sales_SalesPersonId",
+                table: "Sales",
+                column: "SalesPersonId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Sales_TenantId",
                 table: "Sales",
                 column: "TenantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Sales_UserId",
-                table: "Sales",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Suppliers_TenantId",

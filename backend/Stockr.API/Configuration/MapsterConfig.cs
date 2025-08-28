@@ -65,5 +65,35 @@ public static class MapsterConfig
             .Map(dest => dest.Phone, src => src.Phone)
             .Map(dest => dest.CPF, src => src.CPF)
             .Map(dest => dest.CNPJ, src => src.CNPJ);
+
+        config.NewConfig<Sale, SaleViewModel>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.CustomerId, src => src.CustomerId)
+            .Map(dest => dest.Customer, src => src.Customer)
+            .Map(dest => dest.SalespersonId, src => src.SalesPersonId)
+            .Map(dest => dest.SalespersonName, src => src.Salesperson.Name)
+            .Map(dest => dest.SaleStatus, src => src.SaleStatus)
+            .Map(dest => dest.TotalAmount, src => src.TotalAmount)
+            .Map(dest => dest.SaleDate, src => src.SaleDate)
+            .Map(dest => dest.SaleItems, src => src.SaleItems);
+
+        config.NewConfig<SaleItem, SaleItemViewModel>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.ProductId, src => src.ProductId)
+            .Map(dest => dest.ProductName, src => src.Product.Name)
+            .Map(dest => dest.Quantity, src => src.Quantity)
+            .Map(dest => dest.UnitPrice, src => src.UnitPrice)
+            .Map(dest => dest.TotalPrice, src => src.TotalPrice);
+
+        config.NewConfig<SaleViewModel, Sale>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.CustomerId, src => src.CustomerId)
+            .Map(dest => dest.SalesPersonId, src => src.SalespersonId)
+            .Map(dest => dest.SaleStatus, src => src.SaleStatus)
+            .Map(dest => dest.TotalAmount, src => src.TotalAmount)
+            .Map(dest => dest.SaleDate, src => src.SaleDate)
+            .Ignore(dest => dest.Customer)
+            .Ignore(dest => dest.Salesperson)
+            .Ignore(dest => dest.SaleItems);
     }
 }

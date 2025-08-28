@@ -10,6 +10,7 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> GetAllActiveAsync();
     Task<bool> AddAsync(T entity);
+    Task<bool> AddRangeAsync(IList<T> entities);
     Task<bool> UpdateAsync(T entity);
     Task<bool> DeleteAsync(T entity);
 }
@@ -43,6 +44,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     public async Task<bool> AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity);
+        return await SaveChanges();
+    }
+
+    public async Task<bool> AddRangeAsync(IList<T> entities)
+    {
+        await _dbSet.AddRangeAsync(entities);
         return await SaveChanges();
     }
 

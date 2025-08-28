@@ -26,6 +26,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<ISaleItemRepository, SaleItemRepository>();
 
 var app = builder.Build();
 

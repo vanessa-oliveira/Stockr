@@ -7,6 +7,7 @@ namespace Stockr.Infrastructure.Repositories;
 
 public interface ISaleRepository : IGenericRepository<Sale>
 {
+    new Task<IEnumerable<Sale>> GetAllAsync();
     Task<IEnumerable<Sale>> GetByCustomerAsync(Guid customerId);
     Task<IEnumerable<Sale>> GetBySalespersonAsync(Guid userId);
     Task<IEnumerable<Sale>> GetByStatusAsync(SaleStatus status);
@@ -19,6 +20,15 @@ public class SaleRepository : GenericRepository<Sale>, ISaleRepository
 {
     public SaleRepository(DataContext context) : base(context)
     {
+    }
+
+    public new async Task<IEnumerable<Sale>> GetAllAsync()
+    {
+        var sales = await _dbSet.AsNoTracking()
+            .Include(s => s.Customer)
+            .Include(s => s.Salesperson)
+            .Include(s => s.SaleItems).ToListAsync();
+        return sales;
     }
 
     public async Task<IEnumerable<Sale>> GetByCustomerAsync(Guid customerId)
@@ -35,7 +45,7 @@ public class SaleRepository : GenericRepository<Sale>, ISaleRepository
         return await _dbSet.AsNoTracking()
             .Include(s => s.Customer)
             .Include(s => s.Salesperson)
-            .Where(s => s.UserId == userId)
+            .Where(s => s.SalesPersonId == userId)
             .ToListAsync();
     }
 

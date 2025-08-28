@@ -267,7 +267,7 @@ public class DataContext : DbContext
 
             entity.HasOne(e => e.Salesperson)
                 .WithMany()
-                .HasForeignKey(e => e.UserId)
+                .HasForeignKey(e => e.SalesPersonId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             entity.HasOne(e => e.Tenant)

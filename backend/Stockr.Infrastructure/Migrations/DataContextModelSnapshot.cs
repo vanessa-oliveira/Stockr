@@ -273,7 +273,7 @@ namespace Stockr.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid?>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("Deleted")
@@ -286,6 +286,9 @@ namespace Stockr.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("SalesPersonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
@@ -296,16 +299,13 @@ namespace Stockr.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("SalesPersonId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("TenantId");
 
                     b.ToTable("Sales");
                 });
@@ -603,19 +603,17 @@ namespace Stockr.Infrastructure.Migrations
                     b.HasOne("Stockr.Domain.Entities.Customer", "Customer")
                         .WithMany()
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stockr.Domain.Entities.User", "Salesperson")
+                        .WithMany()
+                        .HasForeignKey("SalesPersonId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stockr.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stockr.Domain.Entities.User", "Salesperson")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
 
                     b.Navigation("Customer");
 
