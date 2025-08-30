@@ -68,6 +68,34 @@ public static class MapsterConfig
             .Map(dest => dest.CPF, src => src.CPF)
             .Map(dest => dest.CNPJ, src => src.CNPJ);
 
+        config.NewConfig<User, UserViewModel>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.Role, src => src.Role)
+            .Map(dest => dest.RoleName, src => src.Role.ToString())
+            .Map(dest => dest.IsBlocked, src => src.IsBlocked)
+            .Map(dest => dest.BlockedUntil, src => src.BlockedUntil)
+            .Map(dest => dest.Active, src => src.Active)
+            .Map(dest => dest.LastLoginDate, src => src.LastLoginDate)
+            .Map(dest => dest.LastPasswordChange, src => src.LastPasswordChange)
+            .Map(dest => dest.LoginAttempts, src => src.LoginAttempts)
+            .Map(dest => dest.CreatedAt, src => src.CreatedAt)
+            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt);
+
+        config.NewConfig<UserViewModel, User>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.Name, src => src.Name)
+            .Map(dest => dest.Email, src => src.Email)
+            .Map(dest => dest.Role, src => src.Role)
+            .Map(dest => dest.IsBlocked, src => src.IsBlocked)
+            .Map(dest => dest.BlockedUntil, src => src.BlockedUntil)
+            .Map(dest => dest.Active, src => src.Active)
+            .Map(dest => dest.LastLoginDate, src => src.LastLoginDate)
+            .Map(dest => dest.LastPasswordChange, src => src.LastPasswordChange)
+            .Map(dest => dest.LoginAttempts, src => src.LoginAttempts)
+            .Ignore(dest => dest.Password);
+
         config.NewConfig<Sale, SaleViewModel>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.CustomerId, src => src.CustomerId)
