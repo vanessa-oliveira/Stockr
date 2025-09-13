@@ -58,11 +58,19 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<ISaleItemRepository, SaleItemRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IInventoryMovementRepository, InventoryMovementRepository>();
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+builder.Services.AddScoped<IPurchaseItemRepository, PurchaseItemRepository>();
 
 // Services
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IPurchaseInventoryService, PurchaseInventoryService>();
+builder.Services.AddScoped<IPurchaseItemService, PurchaseItemService>();
+builder.Services.AddScoped<ISaleInventoryService, SaleInventoryService>();
+builder.Services.AddScoped<ISaleItemService, SaleItemService>();
 
 builder.Services.AddHttpContextAccessor();
 

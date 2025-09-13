@@ -12,6 +12,7 @@ public interface IProductRepository : IGenericRepository<Product>
     Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId);
     Task<IEnumerable<Product>> GetBySupplierAsync(Guid supplierId);
     Task<bool> SkuExistsAsync(string sku);
+    Task<IList<Product>> GetByIdsAsync(List<Guid> productIds);
 }
 
 public class ProductRepository : GenericRepository<Product>, IProductRepository
@@ -66,5 +67,10 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     {
         return await _dbSet.AsNoTracking()
             .AnyAsync(p => p.SKU == sku);
+    }
+
+    public async Task<IList<Product>> GetByIdsAsync(List<Guid> productIds)
+    {
+        return await _dbSet.AsNoTracking().Where(x => productIds.Contains(x.Id)).ToListAsync();
     }
 }

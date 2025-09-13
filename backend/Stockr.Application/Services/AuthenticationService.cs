@@ -38,7 +38,6 @@ public class AuthenticationService : IAuthenticationService
     private readonly IUserRepository _userRepository;
     private readonly IPasswordService _passwordService;
     private readonly IJwtTokenService _jwtTokenService;
-    private readonly ILoginAttemptLogger _loginAttemptLogger;
     private readonly ILogger<AuthenticationService> _logger;
     private readonly AuthenticationOptions _options;
     
@@ -54,14 +53,12 @@ public class AuthenticationService : IAuthenticationService
         IUserRepository userRepository,
         IPasswordService passwordService,
         IJwtTokenService jwtTokenService,
-        ILoginAttemptLogger loginAttemptLogger,
         ILogger<AuthenticationService> logger,
         IOptions<AuthenticationOptions> options)
     {
         _userRepository = userRepository;
         _passwordService = passwordService;
         _jwtTokenService = jwtTokenService;
-        _loginAttemptLogger = loginAttemptLogger;
         _logger = logger;
         _options = options.Value;
     }
@@ -78,7 +75,6 @@ public class AuthenticationService : IAuthenticationService
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user == null)
             {
-                await _loginAttemptLogger.LogAttemptAsync(request.Email, false);
                 return AuthenticationResult.Failure(Messages.InvalidCredentials);
             }
 
@@ -102,7 +98,6 @@ public class AuthenticationService : IAuthenticationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error during authentication for user {Email}", request.Email);
-            await _loginAttemptLogger.LogAttemptAsync(request.Email, false);
             return AuthenticationResult.Failure(Messages.AuthenticationFailed);
         }
     }
@@ -144,8 +139,7 @@ public class AuthenticationService : IAuthenticationService
             await UnblockUserAsync(user);
             return AuthenticationResult.Success();
         }
-
-        await _loginAttemptLogger.LogAttemptAsync(request.Email, false);
+        
         return AuthenticationResult.Blocked(Messages.UserBlocked);
     }
 
@@ -177,14 +171,12 @@ public class AuthenticationService : IAuthenticationService
         if (user.LoginAttempts >= _options.MaxLoginAttempts)
         {
             await BlockUserAsync(user);
-            await _loginAttemptLogger.LogAttemptAsync(request.Email, false);
             
             var message = string.Format(Messages.TooManyAttempts, _options.BlockDurationMinutes);
             return AuthenticationResult.Blocked(message);
         }
 
         await _userRepository.UpdateAsync(user);
-        await _loginAttemptLogger.LogAttemptAsync(request.Email, false);
         
         return AuthenticationResult.Failure(Messages.InvalidCredentials);
     }
@@ -205,8 +197,6 @@ public class AuthenticationService : IAuthenticationService
         
         var userViewModel = user.Adapt<UserViewModel>();
         var token = _jwtTokenService.GenerateTokenAsync(userViewModel);
-
-        await _loginAttemptLogger.LogAttemptAsync(request.Email, true);
 
         return AuthenticationResult.Success(
             user: userViewModel,
@@ -261,31 +251,4 @@ public class AuthenticationResult
             Message = message,
             IsBlocked = true
         };
-}
-
-public interface ILoginAttemptLogger
-{
-    Task LogAttemptAsync(string email, bool success);
-}
-
-public class LoginAttemptLogger : ILoginAttemptLogger
-{
-    private readonly ILogger<LoginAttemptLogger> _logger;
-
-    public LoginAttemptLogger(ILogger<LoginAttemptLogger> logger)
-    {
-        _logger = logger;
-    }
-
-    public Task LogAttemptAsync(string email, bool success)
-    {
-        var logLevel = success ? LogLevel.Information : LogLevel.Warning;
-        
-        _logger.Log(logLevel, 
-            "Login attempt for {Email}: {Result}",
-            email, success ? "SUCCESS" : "FAILED");
-
-        // TODO: Implementar persistência estruturada para auditoria
-        return Task.CompletedTask;
-    }
 }

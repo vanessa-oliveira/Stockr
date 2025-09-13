@@ -9,7 +9,6 @@ public class UpdateSaleCommand : IRequest<Unit>
     public Guid CustomerId { get; set; }
     public Guid SalesPersonId { get; set; }
     public string SaleStatus { get; set; }
-    public decimal TotalAmount { get; set; }
     public DateTime SaleDate { get; set; }
     public IList<UpdateSaleItems> SaleItems { get; set; } = new List<UpdateSaleItems>();
 }

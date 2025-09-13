@@ -9,7 +9,7 @@ public interface IInventoryMovementRepository : IGenericRepository<InventoryMove
 {
     Task<IEnumerable<InventoryMovement>> GetByProductAsync(Guid productId);
     Task<IEnumerable<InventoryMovement>> GetByUserAsync(Guid userId);
-    Task<IEnumerable<InventoryMovement>> GetByMovementTypeAsync(MovementType movementType);
+    Task<IEnumerable<InventoryMovement>> GetByMovementTypeAsync(MovementDirection direction);
     Task<IEnumerable<InventoryMovement>> GetByPeriodAsync(DateTime startDate, DateTime endDate);
 }
 
@@ -37,12 +37,12 @@ public class InventoryMovementRepository : GenericRepository<InventoryMovement>,
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<InventoryMovement>> GetByMovementTypeAsync(MovementType movementType)
+    public async Task<IEnumerable<InventoryMovement>> GetByMovementTypeAsync(MovementDirection direction)
     {
         return await _dbSet.AsNoTracking()
             .Include(im => im.Product)
             .Include(im => im.User)
-            .Where(im => im.MovementType == movementType)
+            .Where(im => im.Direction == direction)
             .ToListAsync();
     }
 
@@ -51,7 +51,8 @@ public class InventoryMovementRepository : GenericRepository<InventoryMovement>,
         return await _dbSet.AsNoTracking()
             .Include(im => im.Product)
             .Include(im => im.User)
-            .Where(im => im.CreatedAt >= startDate && im.CreatedAt <= endDate)
+            .Where(im => im.MovementDate >= startDate && im.MovementDate <= endDate)
+            .OrderByDescending(im => im.MovementDate)
             .ToListAsync();
     }
 }

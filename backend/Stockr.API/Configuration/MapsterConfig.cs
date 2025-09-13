@@ -41,16 +41,12 @@ public static class MapsterConfig
         config.NewConfig<Supplier, SupplierViewModel>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
-            .Map(dest => dest.Phone, src => src.Phone)
-            .Map(dest => dest.Active, src => src.Active)
-            .Map(dest => dest.CreatedAt, src => src.CreatedAt)
-            .Map(dest => dest.UpdatedAt, src => src.UpdatedAt);
+            .Map(dest => dest.Phone, src => src.Phone);
 
         config.NewConfig<SupplierViewModel, Supplier>()
             .Map(dest => dest.Id, src => src.Id)
             .Map(dest => dest.Name, src => src.Name)
-            .Map(dest => dest.Phone, src => src.Phone)
-            .Map(dest => dest.Active, src => src.Active);
+            .Map(dest => dest.Phone, src => src.Phone);
 
         config.NewConfig<Customer, CustomerViewModel>()
             .Map(dest => dest.Id, src => src.Id)
@@ -125,5 +121,47 @@ public static class MapsterConfig
             .Ignore(dest => dest.Customer)
             .Ignore(dest => dest.Salesperson)
             .Ignore(dest => dest.SaleItems);
+
+        config.NewConfig<Inventory, InventoryViewModel>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.ProductId, src => src.ProductId)
+            .Map(dest => dest.ProductName, src => src.Product.Name)
+            .Map(dest => dest.MinStock, src => src.MinStock)
+            .Map(dest => dest.CurrentStock, src => src.CurrentStock);
+
+        config.NewConfig<InventoryViewModel, Inventory>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.ProductId, src => src.ProductId)
+            .Map(dest => dest.MinStock, src => src.MinStock)
+            .Map(dest => dest.CurrentStock, src => src.CurrentStock);
+
+        config.NewConfig<InventoryMovement, InventoryMovementViewModel>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.ProductId, src => src.ProductId)
+            .Map(dest => dest.ProductName, src => src.Product.Name)
+            .Map(dest => dest.InventoryId, src => src.InventoryId)
+            .Map(dest => dest.Quantity, src => src.Quantity)
+            .Map(dest => dest.MovementType, src => src.Direction.ToString())
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest.UserName, src => src.User.Name)
+            .Map(dest => dest.Reason, src => src.Reason)
+            .Map(dest => dest.MovementDate, src => src.MovementDate)
+            .Map(dest => dest.UnitCost, src => src.UnitCost)
+            .Map(dest => dest.Notes, src => src.Notes);
+
+        config.NewConfig<InventoryMovementViewModel, InventoryMovement>()
+            .Map(dest => dest.Id, src => src.Id)
+            .Map(dest => dest.ProductId, src => src.ProductId)
+            .Map(dest => dest.InventoryId, src => src.InventoryId)
+            .Map(dest => dest.Quantity, src => src.Quantity)
+            .Map(dest => dest.Direction, src => src.MovementType)
+            .Map(dest => dest.UserId, src => src.UserId)
+            .Map(dest => dest.Reason, src => src.Reason)
+            .Map(dest => dest.MovementDate, src => src.MovementDate)
+            .Map(dest => dest.UnitCost, src => src.UnitCost)
+            .Map(dest => dest.Notes, src => src.Notes)
+            .Ignore(dest => dest.Product)
+            .Ignore(dest => dest.Inventory)
+            .Ignore(dest => dest.User);
     }
 }

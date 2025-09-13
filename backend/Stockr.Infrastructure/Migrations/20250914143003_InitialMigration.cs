@@ -179,6 +179,39 @@ namespace Stockr.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Purchases",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Purchases_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Purchases_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sales",
                 columns: table => new
                 {
@@ -223,7 +256,8 @@ namespace Stockr.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    MinStock = table.Column<int>(type: "int", nullable: false),
+                    CurrentStock = table.Column<int>(type: "int", nullable: false),
                     TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
@@ -248,15 +282,16 @@ namespace Stockr.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "InventoryMovements",
+                name: "PurchaseItems",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PurchaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MovementType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -264,23 +299,23 @@ namespace Stockr.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_InventoryMovements", x => x.Id);
+                    table.PrimaryKey("PK_PurchaseItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_InventoryMovements_Products_ProductId",
+                        name: "FK_PurchaseItems_Products_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_InventoryMovements_Tenants_TenantId",
+                        name: "FK_PurchaseItems_Purchases_PurchaseId",
+                        column: x => x.PurchaseId,
+                        principalTable: "Purchases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PurchaseItems_Tenants_TenantId",
                         column: x => x.TenantId,
                         principalTable: "Tenants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InventoryMovements_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -324,6 +359,69 @@ namespace Stockr.Infrastructure.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "InventoryMovements",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InventoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TenantId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Direction = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MovementDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SaleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PurchaseId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_InventoryMovements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Inventories_InventoryId",
+                        column: x => x.InventoryId,
+                        principalTable: "Inventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Purchases_PurchaseId",
+                        column: x => x.PurchaseId,
+                        principalTable: "Purchases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Sales_SaleId",
+                        column: x => x.SaleId,
+                        principalTable: "Sales",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Tenants_TenantId",
+                        column: x => x.TenantId,
+                        principalTable: "Tenants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryMovements_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_TenantId",
                 table: "Categories",
@@ -347,9 +445,24 @@ namespace Stockr.Infrastructure.Migrations
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryMovements_InventoryId",
+                table: "InventoryMovements",
+                column: "InventoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InventoryMovements_ProductId",
                 table: "InventoryMovements",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryMovements_PurchaseId",
+                table: "InventoryMovements",
+                column: "PurchaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_InventoryMovements_SaleId",
+                table: "InventoryMovements",
+                column: "SaleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_InventoryMovements_TenantId",
@@ -380,6 +493,31 @@ namespace Stockr.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Products_TenantId",
                 table: "Products",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseItems_ProductId",
+                table: "PurchaseItems",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseItems_PurchaseId",
+                table: "PurchaseItems",
+                column: "PurchaseId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseItems_TenantId",
+                table: "PurchaseItems",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Purchases_SupplierId",
+                table: "Purchases",
+                column: "SupplierId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Purchases_TenantId",
+                table: "Purchases",
                 column: "TenantId");
 
             migrationBuilder.CreateIndex(
@@ -439,31 +577,37 @@ namespace Stockr.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Inventories");
+                name: "InventoryMovements");
 
             migrationBuilder.DropTable(
-                name: "InventoryMovements");
+                name: "PurchaseItems");
 
             migrationBuilder.DropTable(
                 name: "SaleItems");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Inventories");
+
+            migrationBuilder.DropTable(
+                name: "Purchases");
 
             migrationBuilder.DropTable(
                 name: "Sales");
 
             migrationBuilder.DropTable(
-                name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Suppliers");
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "Suppliers");
 
             migrationBuilder.DropTable(
                 name: "Tenants");

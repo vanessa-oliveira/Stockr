@@ -19,6 +19,8 @@ public class DataContext : DbContext
     public DbSet<InventoryMovement> InventoryMovements { get; set; }
     public DbSet<Sale> Sales { get; set; }
     public DbSet<SaleItem> SaleItems { get; set; }
+    public DbSet<Purchase> Purchases { get; set; }
+    public DbSet<PurchaseItem> PurchaseItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -34,6 +36,8 @@ public class DataContext : DbContext
         ConfigureInventoryMovement(modelBuilder);
         ConfigureSale(modelBuilder);
         ConfigureSaleItem(modelBuilder);
+        ConfigurePurchase(modelBuilder);
+        ConfigurePurchaseItem(modelBuilder);
         ConfigureGlobalFilters(modelBuilder);
     }
 
@@ -225,7 +229,7 @@ public class DataContext : DbContext
     {
         modelBuilder.Entity<InventoryMovement>(entity =>
         {
-            entity.Property(e => e.MovementType)
+            entity.Property(e => e.Direction)
                 .IsRequired()
                 .HasConversion<string>();
 
@@ -243,6 +247,21 @@ public class DataContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.TenantId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Sale)
+                .WithMany()
+                .HasForeignKey(e => e.SaleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Purchase)
+                .WithMany()
+                .HasForeignKey(e => e.PurchaseId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Inventory)
+                .WithMany(i => i.Movements)
+                .HasForeignKey(e => e.InventoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 
@@ -309,6 +328,67 @@ public class DataContext : DbContext
         });
     }
 
+    private static void ConfigurePurchase(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Purchase>(entity =>
+        {
+            entity.Property(e => e.TotalAmount)
+                .HasPrecision(18,2);
+
+            entity.Property(e => e.PurchaseDate)
+                .HasColumnType("datetime2");
+
+            entity.Property(e => e.InvoiceNumber)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(e => e.Notes)
+                .HasMaxLength(1000);
+
+            entity.HasOne(e => e.Supplier)
+                .WithMany()
+                .HasForeignKey(e => e.SupplierId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Tenant)
+                .WithMany()
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasMany(e => e.PurchaseItems)
+                .WithOne(pi => pi.Purchase)
+                .HasForeignKey(pi => pi.PurchaseId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+    }
+
+    private static void ConfigurePurchaseItem(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<PurchaseItem>(entity =>
+        {
+            entity.Property(e => e.UnitPrice)
+                .HasPrecision(18,2);
+
+            entity.Property(e => e.TotalPrice)
+                .HasPrecision(18,2);
+
+            entity.HasOne(e => e.Purchase)
+                .WithMany(p => p.PurchaseItems)
+                .HasForeignKey(e => e.PurchaseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Tenant)
+                .WithMany()
+                .HasForeignKey(e => e.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+    }
+
     private static void ConfigureGlobalFilters(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>().HasQueryFilter(e => !e.Deleted);
@@ -321,5 +401,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<InventoryMovement>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<Sale>().HasQueryFilter(e => !e.Deleted);
         modelBuilder.Entity<SaleItem>().HasQueryFilter(e => !e.Deleted);
+        modelBuilder.Entity<Purchase>().HasQueryFilter(e => !e.Deleted);
+        modelBuilder.Entity<PurchaseItem>().HasQueryFilter(e => !e.Deleted);
     }
 }

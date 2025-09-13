@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MoreLinq;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Context;
 
@@ -12,7 +13,9 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task<bool> AddAsync(T entity);
     Task<bool> AddRangeAsync(IList<T> entities);
     Task<bool> UpdateAsync(T entity);
+    Task<bool> UpdateRangeAsync(IList<T> entities);
     Task<bool> DeleteAsync(T entity);
+    public Task<bool> DeleteRangeAsync(IList<T> entities);
 }
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
@@ -59,10 +62,23 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
         return await SaveChanges();
     }
 
+    public async Task<bool> UpdateRangeAsync(IList<T> entities)
+    {
+        _dbSet.UpdateRange(entities);
+        return await SaveChanges();
+    }
+
     public async Task<bool> DeleteAsync(T entity)
     {
         entity.Deleted = true;
         _dbSet.Update(entity);
+        return await SaveChanges();
+    }
+    
+    public async Task<bool> DeleteRangeAsync(IList<T> entities)
+    {
+        entities.ForEach(x => x.Deleted = true);
+        _dbSet.UpdateRange(entities);
         return await SaveChanges();
     }
 

@@ -123,14 +123,17 @@ namespace Stockr.Infrastructure.Migrations
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CurrentStock")
+                        .HasColumnType("int");
+
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<int>("MinStock")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
 
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier");
@@ -164,28 +167,55 @@ namespace Stockr.Infrastructure.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("MovementType")
+                    b.Property<string>("Direction")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("InventoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("MovementDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("PurchaseId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("UnitCost")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InventoryId");
+
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.HasIndex("SaleId");
 
                     b.HasIndex("TenantId");
 
@@ -259,6 +289,104 @@ namespace Stockr.Infrastructure.Migrations
                     b.HasIndex("TenantId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.Purchase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupplierId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("Purchases");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.PurchaseItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PurchaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("PurchaseId");
+
+                    b.HasIndex("TenantId");
+
+                    b.ToTable("PurchaseItems");
                 });
 
             modelBuilder.Entity("Stockr.Domain.Entities.Sale", b =>
@@ -549,11 +677,27 @@ namespace Stockr.Infrastructure.Migrations
 
             modelBuilder.Entity("Stockr.Domain.Entities.InventoryMovement", b =>
                 {
+                    b.HasOne("Stockr.Domain.Entities.Inventory", "Inventory")
+                        .WithMany("Movements")
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Stockr.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Stockr.Domain.Entities.Purchase", "Purchase")
+                        .WithMany()
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stockr.Domain.Entities.Sale", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stockr.Domain.Entities.Tenant", "Tenant")
                         .WithMany()
@@ -563,10 +707,15 @@ namespace Stockr.Infrastructure.Migrations
                     b.HasOne("Stockr.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Inventory");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Purchase");
+
+                    b.Navigation("Sale");
 
                     b.Navigation("Tenant");
 
@@ -594,6 +743,50 @@ namespace Stockr.Infrastructure.Migrations
                     b.Navigation("Category");
 
                     b.Navigation("Supplier");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.Purchase", b =>
+                {
+                    b.HasOne("Stockr.Domain.Entities.Supplier", "Supplier")
+                        .WithMany()
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Stockr.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Supplier");
+
+                    b.Navigation("Tenant");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.PurchaseItem", b =>
+                {
+                    b.HasOne("Stockr.Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Stockr.Domain.Entities.Purchase", "Purchase")
+                        .WithMany("PurchaseItems")
+                        .HasForeignKey("PurchaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Stockr.Domain.Entities.Tenant", "Tenant")
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Purchase");
 
                     b.Navigation("Tenant");
                 });
@@ -671,6 +864,16 @@ namespace Stockr.Infrastructure.Migrations
             modelBuilder.Entity("Stockr.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.Inventory", b =>
+                {
+                    b.Navigation("Movements");
+                });
+
+            modelBuilder.Entity("Stockr.Domain.Entities.Purchase", b =>
+                {
+                    b.Navigation("PurchaseItems");
                 });
 
             modelBuilder.Entity("Stockr.Domain.Entities.Sale", b =>
