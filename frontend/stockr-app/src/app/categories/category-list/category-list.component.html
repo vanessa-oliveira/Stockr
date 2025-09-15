@@ -1,0 +1,26 @@
+<div class="content">
+  <p-button label="Adicionar categoria" (click)="openCategoryForm()"/>
+  <app-category-form [(visible)]="visible" [category]="selectedCategory" (categoryChanged)="loadCategories()"></app-category-form>
+  <div class="list">
+    <p-table [value]="categories" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-category>
+        <tr>
+          <td>{{ category.name }}</td>
+          <td>{{ category.description }}</td>
+          <td class="actions" style="display: flex; gap: 8px;">
+            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editCategory(category)"></i>
+            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteCategory(category)"></i>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>

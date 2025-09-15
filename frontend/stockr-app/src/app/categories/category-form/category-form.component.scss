@@ -1,0 +1,43 @@
+$text-secondary-color: #6b7280;
+$spacing-2: 0.5rem;
+$spacing-4: 1rem;
+$spacing-8: 2rem;
+$width-24: 6rem;
+
+.category-dialog {
+  .dialog-header {
+  }
+
+  .dialog-description {
+    color: $text-secondary-color;
+    display: block;
+    margin-bottom: $spacing-8;
+  }
+
+  .form-field {
+    display: flex;
+    align-items: center;
+    gap: $spacing-4;
+    margin-bottom: $spacing-4;
+
+    &:last-of-type {
+      margin-bottom: $spacing-8;
+    }
+
+    label {
+      font-weight: 600;
+      width: $width-24;
+      flex-shrink: 0;
+    }
+
+    input {
+      flex: 1 1 auto;
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-2;
+  }
+}

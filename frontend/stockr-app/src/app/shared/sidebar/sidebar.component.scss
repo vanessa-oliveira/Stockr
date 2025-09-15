@@ -1,0 +1,19 @@
+.sidebar {
+  width: 200px;
+  background-color: #1e293b;
+  color: white;
+  height: calc(100vh - 70px);
+  display: flex;
+  flex-direction: column;
+
+  .sidebar-content {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+
+    a {
+      text-decoration: none;
+    }
+  }
+
+}

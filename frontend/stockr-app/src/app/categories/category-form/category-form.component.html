@@ -1,0 +1,23 @@
+<p-dialog
+  [header]="category ? 'Editar Categoria' : 'Adicionar Categoria'"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="onVisibilityChange($event)"
+  [style]="{ width: '25rem' }"
+  class="category-dialog">
+  <form [formGroup]="categoryForm">
+    <span class="dialog-description">{{ category ? 'Edite os dados da categoria.' : 'Adicione uma nova categoria.' }}</span>
+    <div class="form-field">
+      <label for="name">Nome</label>
+      <input pInputText id="name" formControlName="name" autocomplete="off" />
+    </div>
+    <div class="form-field">
+      <label for="description">Descrição</label>
+      <input pInputText id="description" formControlName="description" autocomplete="off" />
+    </div>
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
+      <p-button label="Salvar" [disabled]="categoryForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+    </div>
+  </form>
+</p-dialog>
