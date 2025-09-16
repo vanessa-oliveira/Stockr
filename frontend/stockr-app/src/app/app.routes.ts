@@ -3,6 +3,7 @@ import {CategoryListComponent} from './categories/category-list/category-list.co
 import {MainLayoutComponent} from './main-layout/main-layout.component';
 import {ProductListComponent} from './products/product-list/product-list.component';
 import {SupplierListComponent} from './suppliers/supplier-list/supplier-list.component';
+import {CustomerListComponent} from './customers/customer-list/customer-list.component';
 
 export const routes: Routes = [
   { path: '', component: MainLayoutComponent,
@@ -10,6 +11,7 @@ export const routes: Routes = [
     { path: 'categories', component: CategoryListComponent },
     { path: 'products', component: ProductListComponent },
     { path: 'suppliers', component: SupplierListComponent },
+    { path: 'customers', component: CustomerListComponent },
   ]
   },
 ];

@@ -1,0 +1,59 @@
+<p-dialog
+  [header]="customer ? 'Editar Cliente' : 'Adicionar Cliente'"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="onVisibilityChange($event)"
+  [style]="{ width: '30rem' }"
+  class="customer-dialog">
+  <form [formGroup]="customerForm">
+    <span class="dialog-description">{{ customer ? 'Edite os dados do cliente.' : 'Adicione um novo cliente.' }}</span>
+
+    <div class="form-field">
+      <label for="name">Nome *</label>
+      <input required pInputText id="name" formControlName="name" autocomplete="off" />
+    </div>
+
+    <div class="form-field">
+      <label for="email">Email *</label>
+      <input required pInputText id="email" type="email" formControlName="email" autocomplete="off" />
+    </div>
+
+    <div class="form-field">
+      <label for="phone">Telefone *</label>
+      <p-inputmask class="phone-field" mask="(99) 99999-9999" id="phone" formControlName="phone" autocomplete="off" />
+    </div>
+
+    <div class="form-field">
+      <label>Tipo de Documento</label>
+      <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+        <div class="flex align-items-center">
+          <p-radiobutton formControlName="documentType" name="documentType" value="cpf" inputId="cpf" />
+          <label for="cpf" class="ml-2" style="margin-left: 0.5rem;">CPF</label>
+        </div>
+        <div class="flex align-items-center">
+          <p-radiobutton formControlName="documentType" name="documentType" value="cnpj" inputId="cnpj" />
+          <label for="cnpj" class="ml-2" style="margin-left: 0.5rem;">CNPJ</label>
+        </div>
+      </div>
+    </div>
+
+    @if (documentType === 'cpf') {
+      <div class="form-field">
+        <label for="cpf-input">CPF</label>
+        <p-inputmask mask="999.999.999-99" id="cpf-input" formControlName="cpf" autocomplete="off" />
+      </div>
+    }
+
+    @if (documentType === 'cnpj') {
+      <div class="form-field">
+        <label for="cnpj-input">CNPJ</label>
+        <p-inputmask mask="99.999.999/9999-99" id="cnpj-input" formControlName="cnpj" autocomplete="off" />
+      </div>
+    }
+
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
+      <p-button label="Salvar" [disabled]="customerForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+    </div>
+  </form>
+</p-dialog>

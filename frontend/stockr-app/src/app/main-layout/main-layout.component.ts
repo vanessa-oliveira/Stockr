@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import {SidebarComponent} from '../shared/sidebar/sidebar.component';
-import {NavbarComponent} from '../shared/navbar/navbar.component';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -8,8 +7,7 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [
     RouterModule,
-    SidebarComponent,
-    NavbarComponent
+    SidebarComponent
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
