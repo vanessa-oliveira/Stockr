@@ -11,7 +11,6 @@ public class Product : BaseEntity
     public Supplier? Supplier { get; set; }
     public decimal CostPrice { get; set; }
     public decimal SalePrice { get; set; }
-    public int MinStock { get; set; }
     public Guid? TenantId { get; set; }
     public Tenant? Tenant { get; set; }
 }

@@ -26,8 +26,7 @@ public static class MapsterConfig
             .Map(dest => dest.Category, src => src.Category)
             .Map(dest => dest.Supplier, src => src.Supplier)
             .Map(dest => dest.CostPrice, src => src.CostPrice)
-            .Map(dest => dest.SalePrice, src => src.SalePrice)
-            .Map(dest => dest.MinStock, src => src.MinStock);
+            .Map(dest => dest.SalePrice, src => src.SalePrice);
 
         config.NewConfig<ProductViewModel, Product>()
             .Map(dest => dest.Id, src => src.Id)
@@ -35,8 +34,7 @@ public static class MapsterConfig
             .Map(dest => dest.SKU, src => src.SKU)
             .Map(dest => dest.Description, src => src.Description)
             .Map(dest => dest.CostPrice, src => src.CostPrice)
-            .Map(dest => dest.SalePrice, src => src.SalePrice)
-            .Map(dest => dest.MinStock, src => src.MinStock);
+            .Map(dest => dest.SalePrice, src => src.SalePrice);
 
         config.NewConfig<Supplier, SupplierViewModel>()
             .Map(dest => dest.Id, src => src.Id)

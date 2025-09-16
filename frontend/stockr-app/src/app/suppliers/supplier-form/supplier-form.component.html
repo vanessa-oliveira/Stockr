@@ -1,0 +1,26 @@
+<p-dialog
+  [header]="supplier ? 'Editar Fornecedor' : 'Adicionar Fornecedor'"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="onVisibilityChange($event)"
+  [style]="{ width: '25rem' }"
+  class="supplier-dialog">
+  <form [formGroup]="supplierForm">
+    <span class="dialog-description">{{ supplier ? 'Edite os dados do fornecedor.' : 'Adicione um novo fornecedor.' }}</span>
+
+    <div class="form-field">
+      <label for="name">Nome *</label>
+      <input pInputText id="name" formControlName="name" autocomplete="off" />
+    </div>
+
+    <div class="form-field">
+      <label for="phone">Telefone *</label>
+      <p-inputmask class="phone-field" mask="(99) 99999-9999" id="phone" formControlName="phone" autocomplete="off" />
+    </div>
+
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
+      <p-button label="Salvar" [disabled]="supplierForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+    </div>
+  </form>
+</p-dialog>

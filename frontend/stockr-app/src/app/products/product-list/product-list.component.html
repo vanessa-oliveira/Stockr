@@ -1,0 +1,34 @@
+<div class="content">
+  <p-button label="Adicionar produto" (click)="openProductForm()"/>
+  <app-product-form [(visible)]="visible" [product]="selectedProduct" (productChanged)="loadProducts()"></app-product-form>
+  <div class="list">
+    <p-table [value]="products" [tableStyle]="{ 'min-width': '70rem' }">
+      <ng-template #header>
+        <tr>
+          <th>SKU</th>
+          <th>Nome</th>
+          <th>Categoria</th>
+          <th>Fornecedor</th>
+          <th>Preço Custo</th>
+          <th>Preço Venda</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-product>
+        <tr>
+          <td>{{ product.sku }}</td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.category?.name || '-' }}</td>
+          <td>{{ product.supplier?.name || '-' }}</td>
+          <td>{{ product.costPrice | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td>{{ product.salePrice | currency:'BRL':'symbol':'1.2-2' }}</td>
+          <td class="actions" style="display: flex; gap: 8px;">
+            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editProduct(product)"></i>
+            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteProduct(product)"></i>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>

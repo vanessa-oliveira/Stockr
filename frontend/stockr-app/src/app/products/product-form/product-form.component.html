@@ -1,0 +1,83 @@
+<p-dialog
+  [header]="product ? 'Editar Produto' : 'Adicionar Produto'"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="onVisibilityChange($event)"
+  [style]="{ width: '40rem' }"
+  class="product-dialog">
+  <form [formGroup]="productForm">
+    <span class="dialog-description">{{ product ? 'Edite os dados do produto.' : 'Adicione um novo produto.' }}</span>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="name">Nome *</label>
+        <input pInputText id="name" formControlName="name" autocomplete="off" />
+      </div>
+
+      <div class="form-field">
+        <label for="sku">SKU *</label>
+        <input pInputText id="sku" formControlName="sku" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-field full-width">
+      <label for="description">Descrição *</label>
+      <textarea pTextarea id="description" formControlName="description" rows="3"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="categoryId">Categoria *</label>
+        <p-select
+          id="categoryId"
+          formControlName="categoryId"
+          [options]="categories"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione uma categoria">
+        </p-select>
+      </div>
+
+      <div class="form-field">
+        <label for="supplierId">Fornecedor</label>
+        <p-select
+          id="supplierId"
+          formControlName="supplierId"
+          [options]="suppliers"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione um fornecedor">
+        </p-select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="costPrice">Preço Custo *</label>
+        <p-inputNumber
+          id="costPrice"
+          formControlName="costPrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR">
+        </p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="salePrice">Preço Venda *</label>
+        <p-inputNumber
+          id="salePrice"
+          formControlName="salePrice"
+          mode="currency"
+          currency="BRL"
+          locale="pt-BR">
+        </p-inputNumber>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
+      <p-button label="Salvar" [disabled]="productForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+    </div>
+  </form>
+</p-dialog>

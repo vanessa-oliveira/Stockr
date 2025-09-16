@@ -10,5 +10,4 @@ public class ProductViewModel
     public SupplierViewModel? Supplier { get; set; }
     public decimal CostPrice { get; set; }
     public decimal SalePrice { get; set; }
-    public int MinStock { get; set; }
 }

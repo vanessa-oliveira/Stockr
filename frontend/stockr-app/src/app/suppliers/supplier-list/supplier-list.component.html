@@ -1,0 +1,26 @@
+<div class="content">
+  <p-button label="Adicionar fornecedor" (click)="openSupplierForm()"/>
+  <app-supplier-form [(visible)]="visible" [supplier]="selectedSupplier" (supplierChanged)="loadSuppliers()"></app-supplier-form>
+  <div class="list">
+    <p-table [value]="suppliers" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Nome</th>
+          <th>Telefone</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-supplier>
+        <tr>
+          <td>{{ supplier.name }}</td>
+          <td>{{ supplier.phone | mask: '(00) 00000-0000' }}</td>
+          <td class="actions" style="display: flex; gap: 8px;">
+            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editSupplier(supplier)"></i>
+            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteSupplier(supplier)"></i>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>

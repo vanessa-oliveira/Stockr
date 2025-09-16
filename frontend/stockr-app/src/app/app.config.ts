@@ -6,12 +6,14 @@ import {providePrimeNG} from 'primeng/config';
 import Material from '@primeuix/themes/aura';
 import {provideHttpClient} from '@angular/common/http';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
+import {provideEnvironmentNgxMask} from 'ngx-mask';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimationsAsync(),
+    provideEnvironmentNgxMask(),
     provideHttpClient(),
     providePrimeNG({
       theme: {

@@ -11,5 +11,4 @@ public class CreateProductCommand : IRequest<Unit>
     public Guid? SupplierId { get; set; }
     public decimal CostPrice { get; set; }
     public decimal SalePrice { get; set; }
-    public int MinStock { get; set; }
 }

@@ -12,7 +12,7 @@ using Stockr.Infrastructure.Context;
 namespace Stockr.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250914143003_InitialMigration")]
+    [Migration("20250930004855_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -253,9 +253,6 @@ namespace Stockr.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
-
-                    b.Property<int>("MinStock")
-                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

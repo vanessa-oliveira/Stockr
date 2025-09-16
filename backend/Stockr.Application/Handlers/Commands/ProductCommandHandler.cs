@@ -27,8 +27,7 @@ public class ProductCommandHandler :
             CategoryId = command.CategoryId,
             SupplierId = command.SupplierId,
             CostPrice = command.CostPrice,
-            SalePrice = command.SalePrice,
-            MinStock = command.MinStock
+            SalePrice = command.SalePrice
         };
         
         await _productRepository.AddAsync(product);
@@ -50,7 +49,6 @@ public class ProductCommandHandler :
         product.SupplierId = command.SupplierId;
         product.CostPrice = command.CostPrice;
         product.SalePrice = command.SalePrice;
-        product.MinStock = command.MinStock;
         
         await _productRepository.UpdateAsync(product);
         return Unit.Value;
