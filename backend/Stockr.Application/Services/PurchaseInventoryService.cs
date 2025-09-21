@@ -32,6 +32,20 @@ public class PurchaseInventoryService : IPurchaseInventoryService
     {
         var (inventoryLookup, movements, inventoriesToUpdate) = await PrepareInventoryOperationAsync(purchaseItems);
 
+        // Validar se todos os produtos possuem estoque cadastrado
+        var productsWithoutInventory = purchaseItems
+            .Where(pi => !inventoryLookup.ContainsKey(pi.ProductId))
+            .Select(pi => pi.ProductId)
+            .ToList();
+
+        if (productsWithoutInventory.Any())
+        {
+            _logger.LogError("Produtos sem configuração de estoque: {ProductIds}",
+                string.Join(", ", productsWithoutInventory));
+            throw new InvalidOperationException(
+                $"Não é possível registrar compra. Os seguintes produtos não possuem estoque cadastrado: {string.Join(", ", productsWithoutInventory)}");
+        }
+
         foreach (var purchaseItem in purchaseItems)
         {
             if (inventoryLookup.TryGetValue(purchaseItem.ProductId, out var inventory))
@@ -47,10 +61,6 @@ public class PurchaseInventoryService : IPurchaseInventoryService
                 movements.Add(movement);
                 inventory.CurrentStock += purchaseItem.Quantity;
                 inventoriesToUpdate.Add(inventory);
-            }
-            else
-            {
-                _logger.LogWarning("Produto {ProductId} não possui configuração de estoque", purchaseItem.ProductId);
             }
         }
 

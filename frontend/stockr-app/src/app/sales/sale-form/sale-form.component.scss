@@ -1,0 +1,146 @@
+::ng-deep .sale-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .dialog-description {
+    display: block;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+
+    input,
+    p-select,
+    p-inputNumber {
+      width: 100%;
+    }
+
+    &.flex-1 {
+      flex: 1;
+    }
+
+    &.flex-2 {
+      flex: 2;
+    }
+  }
+
+  .items-section {
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 1rem;
+    background-color: #f9fafb;
+  }
+
+  .items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    label {
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: #374151;
+    }
+  }
+
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .item-row {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    align-items: flex-end;
+
+    .subtotal {
+      display: flex;
+      align-items: center;
+      height: 2.5rem;
+      padding: 0.5rem 0.75rem;
+      background-color: #f3f4f6;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #374151;
+    }
+  }
+
+  .item-actions {
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: 0.25rem;
+  }
+
+  .no-items {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .total-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 2px solid #e5e7eb;
+
+    .total-label {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #374151;
+    }
+
+    .total-value {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--p-primary-color);
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+  }
+}

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer } from '../models/customer';
+import { environment } from '../../environments/environment';
 
 export interface CreateCustomerRequest {
   name: string;
@@ -24,7 +25,7 @@ export interface UpdateCustomerRequest {
   providedIn: 'root'
 })
 export class CustomerService {
-  private apiUrl: string = "http://localhost:5138/api";
+  private apiUrl: string = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

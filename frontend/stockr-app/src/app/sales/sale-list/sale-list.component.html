@@ -1,0 +1,37 @@
+<div class="content">
+  <p-button label="Adicionar venda" (click)="openSaleForm()"/>
+  <app-sale-form [(visible)]="visible" [sale]="selectedSale" (saleChanged)="loadSales()"></app-sale-form>
+  <div class="list">
+    <p-table [value]="sales" [tableStyle]="{ 'min-width': '50rem' }">
+      <ng-template #header>
+        <tr>
+          <th>Data</th>
+          <th>Cliente</th>
+          <th>Status</th>
+          <th>Itens</th>
+          <th>Total</th>
+          <th>Ações</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-sale>
+        <tr>
+          <td>{{ sale.saleDate | date:'dd/MM/yyyy' }}</td>
+          <td>{{ sale.customer?.name || 'N/A' }}</td>
+          <td>
+            <p-tag
+              [value]="getSaleStatusLabel(sale.saleStatus)"
+              [severity]="getSaleStatusSeverity(sale.saleStatus)">
+            </p-tag>
+          </td>
+          <td>{{ sale.saleItems?.length || 0 }} item(s)</td>
+          <td>{{ sale.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
+          <td class="actions" style="display: flex; gap: 8px;">
+            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editSale(sale)"></i>
+            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteSale(sale)"></i>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-confirmDialog></p-confirmDialog>
+</div>

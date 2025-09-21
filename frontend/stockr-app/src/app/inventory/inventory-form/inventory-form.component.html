@@ -1,0 +1,54 @@
+<p-dialog
+  [header]="inventory ? 'Editar Configuração de Estoque' : 'Adicionar Configuração de Estoque'"
+  [modal]="true"
+  [visible]="visible"
+  (visibleChange)="onVisibilityChange($event)"
+  [style]="{ width: '40rem' }"
+  class="inventory-dialog">
+  <form [formGroup]="inventoryForm">
+    <span class="dialog-description">{{ inventory ? 'Edite a configuração de estoque.' : 'Adicione uma nova configuração de estoque.' }}</span>
+
+    <div class="form-field full-width">
+      <label for="productId">Produto *</label>
+      <p-select
+        required
+        id="productId"
+        formControlName="productId"
+        [options]="availableProducts"
+        optionLabel="name"
+        optionValue="id"
+        placeholder="Selecione um produto">
+      </p-select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label for="currentStock">Estoque Atual *</label>
+        <p-inputNumber
+          required
+          id="currentStock"
+          formControlName="currentStock"
+          [min]="0"
+          [showButtons]="true">
+        </p-inputNumber>
+      </div>
+
+      <div class="form-field">
+        <label for="minStock">Estoque Mínimo *</label>
+        <p-inputNumber
+          required
+          id="minStock"
+          formControlName="minStock"
+          [disabled]="currentStockQuantity < minStockQuantity"
+          [min]="1"
+          [showButtons]="true">
+        </p-inputNumber>
+      </div>
+    </div>
+
+    <div class="dialog-actions">
+      <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
+      <p-button label="Salvar" [disabled]="inventoryForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+    </div>
+  </form>
+</p-dialog>

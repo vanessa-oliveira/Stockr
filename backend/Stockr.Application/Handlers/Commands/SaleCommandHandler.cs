@@ -51,17 +51,44 @@ public class SaleCommandHandler :
         var products = await _productRepository.GetByIdsAsync(productIds);
         var productLookup = products.ToDictionary(p => p.Id);
 
+        // Validar estoque ANTES de criar a venda
+        var inventories = await _inventoryRepository.GetByProductIdsAsync(productIds);
+        var inventoryLookup = inventories.ToDictionary(i => i.ProductId);
+
+        var productsWithoutInventory = productIds.Where(pid => !inventoryLookup.ContainsKey(pid)).ToList();
+        if (productsWithoutInventory.Any())
+        {
+            var productNames = productsWithoutInventory
+                .Select(pid => productLookup.TryGetValue(pid, out var p) ? p.Name : pid.ToString());
+            _logger.LogError("Produtos sem configuração de estoque: {ProductIds}",
+                string.Join(", ", productsWithoutInventory));
+            throw new InvalidOperationException(
+                $"Os seguintes produtos não possuem estoque cadastrado: {string.Join(", ", productNames)}");
+        }
+
+        var insufficientStockItems = new List<(Guid ProductId, string ProductName, int RequiredQuantity, int AvailableStock)>();
+        foreach (var item in command.SaleItems)
+        {
+            var inventory = inventoryLookup[item.ProductId];
+            if (inventory.CurrentStock < item.Quantity)
+            {
+                var productName = productLookup[item.ProductId].Name;
+                insufficientStockItems.Add((item.ProductId, productName, item.Quantity, inventory.CurrentStock));
+            }
+        }
+
+        if (insufficientStockItems.Any())
+        {
+            var errorMessage = string.Join("; ", insufficientStockItems.Select(item =>
+                $"Produto {item.ProductName}: requerido {item.RequiredQuantity}, disponível {item.AvailableStock}"));
+            _logger.LogWarning("Venda rejeitada por estoque insuficiente: {ErrorMessage}", errorMessage);
+            throw new InvalidOperationException($"Estoque insuficiente para completar a venda: {errorMessage}");
+        }
+
         var sale = CreateSale(command, productLookup);
         await _saleRepository.AddAsync(sale);
 
         var saleItems = await _saleItemService.CreateSaleItemsAsync(sale.Id, command.SaleItems, productLookup);
-
-        // Validar disponibilidade de estoque antes de processar
-        var validationResult = await _saleInventoryService.ValidateStockAvailabilityAsync(saleItems);
-        var insufficientStockItems = validationResult.insufficientStockItems;
-        var productsWithoutInventory = validationResult.productsWithoutInventory;
-
-        ValidateStockAvailability(insufficientStockItems, productsWithoutInventory);
 
         await _saleInventoryService.ProcessSaleInventoryAsync(sale.Id, saleItems, sale.SaleDate, command.SalespersonId);
 
@@ -92,6 +119,16 @@ public class SaleCommandHandler :
         var productLookup = products.ToDictionary(p => p.Id);
         var inventories = await _inventoryRepository.GetByProductIdsAsync(productIds);
         var inventoryLookup = inventories.ToDictionary(i => i.ProductId);
+
+        // Validar se todos os produtos possuem estoque cadastrado
+        var productsWithoutInventory = productIds.Where(pid => !inventoryLookup.ContainsKey(pid)).ToList();
+        if (productsWithoutInventory.Any())
+        {
+            var productNames = productsWithoutInventory
+                .Select(pid => productLookup.TryGetValue(pid, out var p) ? p.Name : pid.ToString());
+            throw new InvalidOperationException(
+                $"Os seguintes produtos não possuem estoque cadastrado: {string.Join(", ", productNames)}");
+        }
 
         // Preparar listas para operações em batch
         var movements = new List<InventoryMovement>();

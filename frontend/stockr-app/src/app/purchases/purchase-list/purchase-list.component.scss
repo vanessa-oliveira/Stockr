@@ -1,0 +1,30 @@
+$spacing-4: 1rem;
+$spacing-8: 2rem;
+
+.content {
+  padding: $spacing-4;
+
+  .list {
+    margin-top: $spacing-8;
+
+    .actions {
+      i {
+        padding: 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: var(--p-content-hover-background);
+        }
+
+        &.pi-pencil {
+          color: var(--p-primary-color);
+        }
+
+        &.pi-trash {
+          color: var(--p-red-500);
+        }
+      }
+    }
+  }
+}
