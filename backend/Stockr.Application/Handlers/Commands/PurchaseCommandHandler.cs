@@ -7,7 +7,7 @@ using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Commands;
 
-public class PurchaseCommandHandler : 
+public class PurchaseCommandHandler :
     IRequestHandler<CreatePurchaseCommand, Unit>,
     IRequestHandler<UpdatePurchaseCommand, Unit>,
     IRequestHandler<DeletePurchaseCommand, Unit>
@@ -16,23 +16,32 @@ public class PurchaseCommandHandler :
     private readonly IPurchaseItemRepository _purchaseItemRepository;
     private readonly IPurchaseInventoryService _purchaseInventoryService;
     private readonly IPurchaseItemService _purchaseItemService;
+    private readonly ITenantService _tenantService;
     private readonly ILogger<PurchaseCommandHandler> _logger;
 
-    public PurchaseCommandHandler(IPurchaseRepository purchaseRepository, 
-        IPurchaseItemRepository purchaseItemRepository, 
-        IPurchaseInventoryService purchaseInventoryService, 
-        IPurchaseItemService purchaseItemService, 
+    public PurchaseCommandHandler(IPurchaseRepository purchaseRepository,
+        IPurchaseItemRepository purchaseItemRepository,
+        IPurchaseInventoryService purchaseInventoryService,
+        IPurchaseItemService purchaseItemService,
+        ITenantService tenantService,
         ILogger<PurchaseCommandHandler> logger)
     {
         _purchaseRepository = purchaseRepository;
         _purchaseItemRepository = purchaseItemRepository;
         _purchaseInventoryService = purchaseInventoryService;
         _purchaseItemService = purchaseItemService;
+        _tenantService = tenantService;
         _logger = logger;
     }
 
     public async Task<Unit> Handle(CreatePurchaseCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant");
+        }
+
         if (!command.PurchaseItems.Any())
         {
             throw new InvalidOperationException("Purchase must have at least one item");
@@ -44,7 +53,8 @@ public class PurchaseCommandHandler :
             PurchaseDate = command.PurchaseDate,
             Notes = command.Notes,
             InvoiceNumber = command.InvoiceNumber,
-            TotalAmount = _purchaseItemService.CalculateTotalAmount(command.PurchaseItems)
+            TotalAmount = _purchaseItemService.CalculateTotalAmount(command.PurchaseItems),
+            TenantId = currentTenantId.Value
         };
 
         await _purchaseRepository.AddAsync(purchase);

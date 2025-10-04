@@ -4,11 +4,21 @@ $spacing-4: 1rem;
 $spacing-8: 2rem;
 $width-24: 6rem;
 
-.supplier-dialog {
+::ng-deep .supplier-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
   .dialog-description {
     color: $text-secondary-color;
     display: block;
     margin-bottom: $spacing-8;
+    font-size: 0.875rem;
   }
 
   .form-field {
@@ -22,20 +32,39 @@ $width-24: 6rem;
     }
 
     label {
-      font-weight: 600;
+      font-weight: 500;
       width: $width-24;
       flex-shrink: 0;
+      font-size: 0.875rem;
+      color: #374151;
     }
 
     input,
     .phone-field {
       flex: 1 1 auto;
+
+      &:focus {
+        border-color: #1293b3;
+        box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+      }
     }
   }
 
   .dialog-actions {
     display: flex;
     justify-content: flex-end;
-    gap: $spacing-2;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+
+    ::ng-deep .save-button .p-button {
+      background-color: #1293b3;
+      border-color: #1293b3;
+
+      &:hover {
+        background-color: #076e87;
+        border-color: #076e87;
+      }
+    }
   }
 }

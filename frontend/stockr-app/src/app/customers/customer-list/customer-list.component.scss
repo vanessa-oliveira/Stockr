@@ -4,6 +4,16 @@ $spacing-8: 2rem;
 .content {
   padding: $spacing-4;
 
+  ::ng-deep .add-customer-button .p-button {
+    background-color: #1293b3;
+    border-color: #1293b3;
+
+    &:hover {
+      background-color: #076e87;
+      border-color: #076e87;
+    }
+  }
+
   .list {
     margin-top: $spacing-8;
 

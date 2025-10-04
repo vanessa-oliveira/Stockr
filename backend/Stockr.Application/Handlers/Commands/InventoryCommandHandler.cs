@@ -1,5 +1,6 @@
 using MediatR;
 using Stockr.Application.Commands.Inventory;
+using Stockr.Application.Services;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
@@ -11,19 +12,28 @@ public class InventoryCommandHandler :
     IRequestHandler<DeleteInventoryCommand, Unit>
 {
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly ITenantService _tenantService;
 
-    public InventoryCommandHandler(IInventoryRepository inventoryRepository)
+    public InventoryCommandHandler(IInventoryRepository inventoryRepository, ITenantService tenantService)
     {
         _inventoryRepository = inventoryRepository;
+        _tenantService = tenantService;
     }
-    
+
     public async Task<Unit> Handle(CreateInventoryCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant");
+        }
+        
         var inventory = new Inventory()
         {
             ProductId = command.ProductId,
             MinStock = command.MinStock,
             CurrentStock = command.CurrentStock,
+            TenantId = currentTenantId.Value
         };
         
         await _inventoryRepository.AddAsync(inventory);

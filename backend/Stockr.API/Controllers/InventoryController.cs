@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stockr.Application.Commands.Inventory;
 using Stockr.Application.Queries.Inventory;
@@ -8,6 +9,7 @@ namespace Stockr.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class InventoryController : ControllerBase
 {
     private readonly IMediator _mediator;

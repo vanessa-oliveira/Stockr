@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../models/product';
@@ -15,6 +16,7 @@ import { ProductFormComponent } from '../product-form/product-form.component';
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
+    TooltipModule,
     ProductFormComponent,
     CurrencyPipe
   ],

@@ -1,0 +1,72 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Stockr</h1>
+      <p>Faça login na sua conta</p>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          class="form-control"
+          [class.is-invalid]="email?.invalid && email?.touched"
+          placeholder="seu@email.com"
+        >
+        @if(email?.invalid && email?.touched){
+          <div class="error-message">
+            @if(email?.errors?.['required']){
+              <small>Email é obrigatório</small>
+            }
+            @if(email?.errors?.['email']){
+              <small>Email inválido</small>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          class="form-control"
+          [class.is-invalid]="password?.invalid && password?.touched"
+          placeholder="••••••••"
+        >
+        @if(password?.invalid && password?.touched){
+          <div class="error-message">
+            @if(password?.errors?.['required']){
+              <small>Senha é obrigatória</small>
+            }
+            @if(password?.errors?.['minlength']){
+              <small>Senha deve ter no mínimo 8 caracteres</small>
+            }
+          </div>
+        }
+      </div>
+
+      @if(errorMessage){
+        <div class="error-alert">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="btn-login"
+        [disabled]="loading || loginForm.invalid"
+      >
+        {{ loading ? 'Entrando...' : 'Entrar' }}
+      </button>
+
+      <div class="signup-link">
+        Não tem uma conta? <a routerLink="/signup">Cadastre-se</a>
+      </div>
+    </form>
+  </div>
+</div>

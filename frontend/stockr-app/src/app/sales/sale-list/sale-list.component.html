@@ -1,5 +1,5 @@
 <div class="content">
-  <p-button label="Adicionar venda" (click)="openSaleForm()"/>
+  <p-button class="add-sale-button" label="Adicionar venda" (click)="openSaleForm()"/>
   <app-sale-form [(visible)]="visible" [sale]="selectedSale" (saleChanged)="loadSales()"></app-sale-form>
   <div class="list">
     <p-table [value]="sales" [tableStyle]="{ 'min-width': '50rem' }">

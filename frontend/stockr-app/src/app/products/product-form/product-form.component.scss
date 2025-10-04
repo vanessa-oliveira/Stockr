@@ -4,11 +4,21 @@ $spacing-4: 1rem;
 $spacing-8: 2rem;
 $width-24: 6rem;
 
-.product-dialog {
+::ng-deep .product-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
   .dialog-description {
     color: $text-secondary-color;
     display: block;
     margin-bottom: $spacing-8;
+    font-size: 0.875rem;
   }
 
   .form-row {
@@ -36,19 +46,61 @@ $width-24: 6rem;
     }
 
     label {
-      font-weight: 600;
+      font-weight: 500;
       font-size: 0.875rem;
+      color: #374151;
     }
 
     input, textarea, p-dropdown, p-inputNumber {
       width: 100%;
+    }
+
+    ::ng-deep .p-dropdown:not(.p-disabled).p-focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-inputnumber:not(.p-disabled).p-focus .p-inputtext {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    input:focus, textarea:focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
     }
   }
 
   .dialog-actions {
     display: flex;
     justify-content: flex-end;
-    gap: $spacing-2;
-    margin-top: $spacing-8;
+    gap: 0.75rem;
+    margin-top: $spacing-4;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+
+    ::ng-deep .save-button .p-button {
+      background-color: #1293b3;
+      border-color: #1293b3;
+
+      &:hover {
+        background-color: #076e87;
+        border-color: #076e87;
+      }
+    }
+  }
+}
+
+::ng-deep .p-dropdown-list {
+  .p-dropdown-option.p-selected,
+  .p-dropdown-option.p-highlight,
+  .p-dropdown-option.p-focus {
+    background: #1293b3 !important;
+    color: white !important;
+  }
+
+  .p-dropdown-option:not(.p-disabled):not(.p-selected):not(.p-highlight):hover {
+    background: rgba(18, 147, 179, 0.12) !important;
+    color: #1293b3 !important;
   }
 }

@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stockr.Application.Commands.Customers;
 using Stockr.Application.Queries.Customers;
@@ -7,6 +8,7 @@ namespace Stockr.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CustomerController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -5,5 +5,5 @@ namespace Stockr.Application.Queries.Users;
 
 public class GetUserByEmailQuery : IRequest<UserViewModel?>
 {
-    public string Email { get; set; }
+    public required string Email { get; set; }
 }

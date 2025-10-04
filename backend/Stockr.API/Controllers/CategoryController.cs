@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stockr.Application.Commands.Categories;
 using Stockr.Application.Queries.Categories;
@@ -7,6 +8,7 @@ namespace Stockr.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CategoryController : ControllerBase
 {
     private readonly IMediator _mediator;

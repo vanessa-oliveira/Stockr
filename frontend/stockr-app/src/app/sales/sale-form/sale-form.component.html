@@ -131,7 +131,7 @@
 
     <div class="dialog-actions">
       <p-button label="Cancelar" severity="secondary" (click)="closeDialog()" />
-      <p-button label="Salvar" [disabled]="saleForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
+      <p-button class="save-button" label="Salvar" [disabled]="saleForm.invalid || isLoading" [loading]="isLoading" (click)="onSubmit()" />
     </div>
   </form>
 </p-dialog>

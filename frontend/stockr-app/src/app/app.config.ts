@@ -5,10 +5,11 @@ import localePt from '@angular/common/locales/pt';
 
 import { routes } from './app.routes';
 import {providePrimeNG} from 'primeng/config';
-import Material from '@primeuix/themes/aura';
-import {provideHttpClient} from '@angular/common/http';
+import Aura from '@primeuix/themes/aura';
+import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideEnvironmentNgxMask} from 'ngx-mask';
+import {authInterceptor} from './interceptors/auth.interceptor';
 
 registerLocaleData(localePt);
 
@@ -18,11 +19,11 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideAnimationsAsync(),
     provideEnvironmentNgxMask(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     { provide: LOCALE_ID, useValue: 'pt' },
     providePrimeNG({
       theme: {
-        preset: Material,
+        preset: Aura,
         options: {
           darkModeSelector: false,
         }

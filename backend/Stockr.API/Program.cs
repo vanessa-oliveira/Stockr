@@ -5,10 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
 using Stockr.API.Configuration;
+using Stockr.API.Middleware;
 using Stockr.Application.Commands.Categories;
 using Stockr.Application.Configuration;
 using Stockr.Application.Services;
 using Stockr.Infrastructure.Context;
+using Stockr.Infrastructure.Interfaces;
 using Stockr.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +64,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IInventoryMovementRepository, InventoryMovementRepository>();
 builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 builder.Services.AddScoped<IPurchaseItemRepository, PurchaseItemRepository>();
+builder.Services.AddScoped<ITenantRepository, TenantRepository>();
 
 // Services
 builder.Services.AddScoped<IPasswordService, PasswordService>();
@@ -71,6 +74,8 @@ builder.Services.AddScoped<IPurchaseInventoryService, PurchaseInventoryService>(
 builder.Services.AddScoped<IPurchaseItemService, PurchaseItemService>();
 builder.Services.AddScoped<ISaleInventoryService, SaleInventoryService>();
 builder.Services.AddScoped<ISaleItemService, SaleItemService>();
+builder.Services.AddScoped<ITenantService, TenantService>();
+builder.Services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<ITenantService>());
 
 builder.Services.AddHttpContextAccessor();
 
@@ -95,11 +100,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
+
+app.UseMiddleware<TenantMiddleware>();
+
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors("AllowAll");
 
 app.Run();

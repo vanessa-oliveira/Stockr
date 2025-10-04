@@ -1,6 +1,13 @@
 <div class="content">
-  <p-button label="Adicionar produto" (click)="openProductForm()"/>
+  <p-button
+    class="add-product-button"
+    label="Adicionar produto"
+    icon="pi pi-plus"
+    (click)="openProductForm()"
+  />
+
   <app-product-form [(visible)]="visible" [product]="selectedProduct" (productChanged)="loadProducts()"></app-product-form>
+
   <div class="list">
     <p-table [value]="products" [tableStyle]="{ 'min-width': '70rem' }">
       <ng-template #header>
@@ -16,15 +23,35 @@
       </ng-template>
       <ng-template #body let-product>
         <tr>
-          <td>{{ product.sku }}</td>
+          <td>
+            <div class="product-sku">
+              {{ product.sku }}
+            </div>
+          </td>
           <td>{{ product.name }}</td>
           <td>{{ product.category?.name || '-' }}</td>
           <td>{{ product.supplier?.name || '-' }}</td>
           <td>{{ product.costPrice | currency:'BRL':'symbol':'1.2-2' }}</td>
           <td>{{ product.salePrice | currency:'BRL':'symbol':'1.2-2' }}</td>
-          <td class="actions" style="display: flex; gap: 8px;">
-            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editProduct(product)"></i>
-            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteProduct(product)"></i>
+          <td class="actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (click)="editProduct(product)"
+              pTooltip="Editar produto"
+              tooltipPosition="top"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (click)="deleteProduct(product)"
+              pTooltip="Excluir produto"
+              tooltipPosition="top"
+            />
           </td>
         </tr>
       </ng-template>

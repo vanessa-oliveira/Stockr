@@ -8,7 +8,7 @@ using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Commands;
 
-public class SaleCommandHandler : 
+public class SaleCommandHandler :
     IRequestHandler<CreateSaleCommand, Unit>,
     IRequestHandler<UpdateSaleCommand, Unit>,
     IRequestHandler<DeleteSaleCommand, Unit>,
@@ -21,6 +21,7 @@ public class SaleCommandHandler :
     private readonly IInventoryMovementRepository _inventoryMovementRepository;
     private readonly ISaleItemService _saleItemService;
     private readonly ISaleInventoryService _saleInventoryService;
+    private readonly ITenantService _tenantService;
     private readonly ILogger<SaleCommandHandler> _logger;
 
     public SaleCommandHandler(
@@ -31,6 +32,7 @@ public class SaleCommandHandler :
         IInventoryMovementRepository inventoryMovementRepository,
         ISaleItemService saleItemService,
         ISaleInventoryService saleInventoryService,
+        ITenantService tenantService,
         ILogger<SaleCommandHandler> logger)
     {
         _saleRepository = saleRepository;
@@ -40,11 +42,18 @@ public class SaleCommandHandler :
         _inventoryMovementRepository = inventoryMovementRepository;
         _saleItemService = saleItemService;
         _saleInventoryService = saleInventoryService;
+        _tenantService = tenantService;
         _logger = logger;
     }
 
     public async Task<Unit> Handle(CreateSaleCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant");
+        }
+
         ValidateCreateCommand(command);
 
         var productIds = command.SaleItems.Select(item => item.ProductId).Distinct().ToList();
@@ -85,7 +94,7 @@ public class SaleCommandHandler :
             throw new InvalidOperationException($"Estoque insuficiente para completar a venda: {errorMessage}");
         }
 
-        var sale = CreateSale(command, productLookup);
+        var sale = CreateSale(command, productLookup, currentTenantId.Value);
         await _saleRepository.AddAsync(sale);
 
         var saleItems = await _saleItemService.CreateSaleItemsAsync(sale.Id, command.SaleItems, productLookup);
@@ -373,7 +382,7 @@ public class SaleCommandHandler :
         return sale;
     }
 
-    private static Sale CreateSale(CreateSaleCommand command, Dictionary<Guid, Product> productLookup)
+    private static Sale CreateSale(CreateSaleCommand command, Dictionary<Guid, Product> productLookup, Guid tenantId)
     {
         var totalAmount = command.SaleItems.Sum(item =>
         {
@@ -387,7 +396,8 @@ public class SaleCommandHandler :
             SalesPersonId = command.SalespersonId,
             SaleStatus = Enum.Parse<SaleStatus>(command.SaleStatus),
             SaleDate = command.SaleDate ?? DateTime.Now,
-            TotalAmount = totalAmount
+            TotalAmount = totalAmount,
+            TenantId = tenantId
         };
     }
 

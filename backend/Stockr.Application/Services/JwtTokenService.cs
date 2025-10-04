@@ -10,7 +10,7 @@ namespace Stockr.Application.Services;
 
 public interface IJwtTokenService
 {
-    string GenerateTokenAsync(UserViewModel user);
+    string GenerateToken(UserViewModel user);
 }
 
 public class JwtTokenService : IJwtTokenService
@@ -24,18 +24,23 @@ public class JwtTokenService : IJwtTokenService
         _revokedTokens = new HashSet<string>();
     }
 
-    public string GenerateTokenAsync(UserViewModel user)
+    public string GenerateToken(UserViewModel user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_jwtConfig.SecretKey);
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role.ToString())
         };
+        
+        if (user.TenantId.HasValue)
+        {
+            claims.Add(new Claim("TenantId", user.TenantId.Value.ToString()));
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

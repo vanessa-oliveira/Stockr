@@ -196,7 +196,7 @@ public class AuthenticationService : IAuthenticationService
         await ResetLoginAttemptsAsync(user);
         
         var userViewModel = user.Adapt<UserViewModel>();
-        var token = _jwtTokenService.GenerateTokenAsync(userViewModel);
+        var token = _jwtTokenService.GenerateToken(userViewModel);
 
         return AuthenticationResult.Success(
             user: userViewModel,

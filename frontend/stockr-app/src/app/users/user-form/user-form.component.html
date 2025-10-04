@@ -1,0 +1,130 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="user-dialog"
+  [style]="{ width: '600px' }"
+>
+  <ng-template #header>
+    <div class="dialog-header">
+      <span>Criar Novo Usuário</span>
+    </div>
+  </ng-template>
+
+  <span class="dialog-description">
+    Preencha os dados abaixo para criar um novo usuário no sistema
+  </span>
+
+  <form [formGroup]="createUserForm" (ngSubmit)="onCreateUser()">
+    <div class="form-field">
+      <label for="name">
+        Nome Completo
+      </label>
+      <input
+        pInputText
+        type="text"
+        id="name"
+        formControlName="name"
+        placeholder="Digite o nome completo"
+      />
+      @if(name?.invalid && name?.touched) {
+        <small class="p-error">
+          @if(name?.errors?.['required']) {
+            Nome é obrigatório
+          }
+          @if(name?.errors?.['minlength']) {
+            Nome deve ter no mínimo 3 caracteres
+          }
+        </small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="email">
+        Email
+      </label>
+      <input
+        pInputText
+        type="email"
+        id="email"
+        formControlName="email"
+        placeholder="email@exemplo.com"
+      />
+      @if(email?.invalid && email?.touched) {
+        <small class="p-error">
+          @if(email?.errors?.['required']) {
+            Email é obrigatório
+          }
+          @if(email?.errors?.['email']) {
+            Email inválido
+          }
+        </small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="password">Senha</label>
+      <p-password
+        id="password"
+        formControlName="password"
+        placeholder="Digite a senha"
+        [toggleMask]="true"
+        [feedback]="false"
+      />
+      <small class="form-hint">
+        Mínimo 8 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais
+      </small>
+      @if(password?.invalid && password?.touched) {
+        <small class="p-error">
+          @if(password?.errors?.['required']) {
+            Senha é obrigatória
+          }
+          @if(password?.errors?.['minlength']) {
+            Senha deve ter no mínimo 8 caracteres
+          }
+        </small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="role">
+        Perfil
+      </label>
+      <p-select
+        id="role"
+        formControlName="role"
+        [options]="availableRoles"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Selecione o perfil"
+        appendTo="body"
+      >
+        <ng-template #item let-option>
+          <div class="role-option">
+            <div class="role-label">{{ option.label }}</div>
+            <div class="role-description">{{ option.description }}</div>
+          </div>
+        </ng-template>
+      </p-select>
+    </div>
+
+    <div class="dialog-actions">
+      <p-button
+        label="Cancelar"
+        [outlined]="true"
+        severity="secondary"
+        (onClick)="closeDialog()"
+        [disabled]="loading"
+      />
+      <p-button
+        class="save-button"
+        label="{{ loading ? 'Criando...' : 'Salvar' }}"
+        type="submit"
+        styleClass="save-button"
+        [disabled]="loading || createUserForm.invalid"
+        [loading]="loading"
+      />
+    </div>
+  </form>
+</p-dialog>

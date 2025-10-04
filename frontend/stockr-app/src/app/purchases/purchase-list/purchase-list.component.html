@@ -1,5 +1,5 @@
 <div class="content">
-  <p-button label="Adicionar compra" (click)="openPurchaseForm()"/>
+  <p-button class="add-purchase-button" label="Adicionar compra" (click)="openPurchaseForm()"/>
   <app-purchase-form [(visible)]="visible" [purchase]="selectedPurchase" (purchaseChanged)="loadPurchases()"></app-purchase-form>
   <div class="list">
     <p-table [value]="purchases" [tableStyle]="{ 'min-width': '70rem' }">

@@ -1,0 +1,143 @@
+::ng-deep .user-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: #1f2937;
+
+      i {
+        color: #1293b3;
+        font-size: 1.25rem;
+      }
+    }
+  }
+
+  .p-dialog-content {
+    padding: 1.5rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .dialog-description {
+    display: block;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: #374151;
+
+      i {
+        color: #1293b3;
+        font-size: 1rem;
+      }
+    }
+
+    input,
+    p-select,
+    p-password {
+      width: 100%;
+    }
+
+    .form-hint {
+      display: block;
+      color: #6b7280;
+      font-size: 0.75rem;
+      margin-top: -0.25rem;
+    }
+
+    ::ng-deep .p-select:not(.p-disabled).p-focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-password:not(.p-disabled).p-focus .p-inputtext {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-password .p-password-toggle-icon {
+      color: #1293b3;
+    }
+
+    input:focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+  }
+
+  .dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+
+    ::ng-deep .save-button .p-button {
+      background-color: #1293b3;
+      border-color: #1293b3;
+
+      &:hover {
+        background-color: #076e87;
+        border-color: #076e87;
+      }
+    }
+  }
+}
+
+::ng-deep .p-select-list {
+  .p-select-option.p-selected,
+  .p-select-option.p-highlight,
+  .p-select-option.p-focus {
+    background: #1293b3 !important;
+    color: white !important;
+  }
+
+  .p-select-option:not(.p-disabled):not(.p-selected):not(.p-highlight):hover {
+    background: rgba(18, 147, 179, 0.12) !important;
+    color: #1293b3 !important;
+  }
+
+  .role-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .role-label {
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .role-description {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+  }
+
+  .p-select-option.p-selected .role-description,
+  .p-select-option.p-highlight .role-description {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}

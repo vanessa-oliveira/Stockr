@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { Supplier } from '../../models/supplier';
 import { SupplierService } from '../../services/supplier.service';
@@ -15,6 +16,7 @@ import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
+    TooltipModule,
     SupplierFormComponent,
     NgxMaskPipe
   ],

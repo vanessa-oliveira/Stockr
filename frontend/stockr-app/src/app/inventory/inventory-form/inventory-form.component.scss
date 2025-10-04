@@ -1,38 +1,59 @@
 ::ng-deep .inventory-dialog {
+  .p-dialog-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
   .p-dialog-content {
-    padding: 0;
+    padding: 1.5rem;
   }
 
   form {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 20px;
+    gap: 1.25rem;
   }
 
   .dialog-description {
-    color: #666;
-    font-size: 14px;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
   }
 
   .form-row {
     display: flex;
-    gap: 20px;
+    gap: 1.25rem;
   }
 
   .form-field {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 0.5rem;
     flex: 1;
 
     label {
       font-weight: 500;
-      font-size: 14px;
+      font-size: 0.875rem;
+      color: #374151;
     }
 
     input, p-select, p-inputNumber, textarea {
       width: 100%;
+    }
+
+    ::ng-deep .p-select:not(.p-disabled).p-focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-inputnumber:not(.p-disabled).p-focus .p-inputtext {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    input:focus, textarea:focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
     }
   }
 
@@ -42,8 +63,34 @@
 
   .dialog-actions {
     display: flex;
-    gap: 12px;
+    gap: 0.75rem;
     justify-content: flex-end;
-    padding-top: 10px;
+    padding-top: 1.5rem;
+    margin-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+
+    ::ng-deep .save-button .p-button {
+      background-color: #1293b3;
+      border-color: #1293b3;
+
+      &:hover {
+        background-color: #076e87;
+        border-color: #076e87;
+      }
+    }
+  }
+}
+
+::ng-deep .p-select-list {
+  .p-select-option.p-selected,
+  .p-select-option.p-highlight,
+  .p-select-option.p-focus {
+    background: #1293b3 !important;
+    color: white !important;
+  }
+
+  .p-select-option:not(.p-disabled):not(.p-selected):not(.p-highlight):hover {
+    background: rgba(18, 147, 179, 0.12) !important;
+    color: #1293b3 !important;
   }
 }

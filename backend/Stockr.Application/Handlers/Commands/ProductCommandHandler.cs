@@ -1,24 +1,33 @@
 using MediatR;
 using Stockr.Application.Commands.Products;
+using Stockr.Application.Services;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Commands;
 
-public class ProductCommandHandler : 
+public class ProductCommandHandler :
     IRequestHandler<CreateProductCommand, Unit>,
     IRequestHandler<UpdateProductCommand, Unit>,
     IRequestHandler<DeleteProductCommand, Unit>
 {
     private readonly IProductRepository _productRepository;
+    private readonly ITenantService _tenantService;
 
-    public ProductCommandHandler(IProductRepository productRepository)
+    public ProductCommandHandler(IProductRepository productRepository, ITenantService tenantService)
     {
         _productRepository = productRepository;
+        _tenantService = tenantService;
     }
-    
+
     public async Task<Unit> Handle(CreateProductCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant");
+        }
+
         var product = new Product()
         {
             Name = command.Name,
@@ -27,9 +36,10 @@ public class ProductCommandHandler :
             CategoryId = command.CategoryId,
             SupplierId = command.SupplierId,
             CostPrice = command.CostPrice,
-            SalePrice = command.SalePrice
+            SalePrice = command.SalePrice,
+            TenantId = currentTenantId.Value
         };
-        
+
         await _productRepository.AddAsync(product);
         return Unit.Value;
     }

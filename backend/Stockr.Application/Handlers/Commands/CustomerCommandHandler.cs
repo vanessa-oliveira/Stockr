@@ -1,33 +1,43 @@
 using MediatR;
 using Stockr.Application.Commands.Customers;
+using Stockr.Application.Services;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Commands;
 
-public class CustomerCommandHandler : 
+public class CustomerCommandHandler :
     IRequestHandler<CreateCustomerCommand, Unit>,
     IRequestHandler<UpdateCustomerCommand, Unit>,
     IRequestHandler<DeleteCustomerCommand, Unit>
 {
     private readonly ICustomerRepository _customerRepository;
+    private readonly ITenantService _tenantService;
 
-    public CustomerCommandHandler(ICustomerRepository customerRepository)
+    public CustomerCommandHandler(ICustomerRepository customerRepository, ITenantService tenantService)
     {
         _customerRepository = customerRepository;
+        _tenantService = tenantService;
     }
-    
+
     public async Task<Unit> Handle(CreateCustomerCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant");
+        }
+
         var customer = new Customer
         {
             Name = command.Name,
             Email = command.Email,
             Phone = command.Phone,
             CPF = command.CPF,
-            CNPJ = command.CNPJ
+            CNPJ = command.CNPJ,
+            TenantId = currentTenantId.Value
         };
-        
+
         await _customerRepository.AddAsync(customer);
         return Unit.Value;
     }

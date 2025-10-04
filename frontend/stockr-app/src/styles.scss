@@ -10,6 +10,16 @@
 html, body {
   height: 100%;
   font: inherit;
+  overflow-x: hidden;
 }
 
+:root {
+  --p-datepicker-date-selected-background: #1293b3 !important;
+  --p-inputtext-focus-border-color: #1293b3 !important;
+  --p-textarea-focus-border-color: #1293b3 !important;
+  --p-radiobutton-checked-background: #1293b3 !important;
+  --p-radiobutton-checked-border-color: #1293b3 !important;
+  --p-radiobutton-checked-hover-background: #1293b3 !important;
+  --p-radiobutton-checked-hover-border-color: #1293b3 !important;
+}
 

@@ -1,0 +1,123 @@
+<div class="content">
+  <p-confirmDialog />
+
+  <p-button
+    class="add-user-button"
+    label="Adicionar usuário"
+    (click)="openUserForm()"
+  />
+
+  <app-user-form
+    [(visible)]="showCreateForm"
+    (userChanged)="loadUsers()">
+  </app-user-form>
+
+  @if(successMessage) {
+    <div class="alert alert-success">
+      <i class="pi pi-check-circle"></i>
+      {{ successMessage }}
+    </div>
+  }
+
+  @if(errorMessage) {
+    <div class="alert alert-error">
+      <i class="pi pi-times-circle"></i>
+      {{ errorMessage }}
+    </div>
+  }
+
+  <div class="list">
+    @if(loading) {
+      <div class="loading">
+        <i class="pi pi-spin pi-spinner"></i>
+        Carregando usuários...
+      </div>
+    } @else if(users.length === 0) {
+      <div class="empty-state">
+        <i class="pi pi-users"></i>
+        <p>Nenhum usuário cadastrado ainda.</p>
+        <p>Clique em "Adicionar usuário" para criar o primeiro usuário.</p>
+      </div>
+    } @else {
+      <p-table [value]="users" [tableStyle]="{ 'min-width': '70rem' }">
+        <ng-template #header>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Status</th>
+            <th>Criado em</th>
+            <th>Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template #body let-user>
+          <tr>
+            <td>
+              <div class="user-name">
+                {{ user.name }}
+              </div>
+            </td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="badge" [class]="getRoleBadgeClass(user.role)">
+                <i [class]="getRoleIcon(user.role)"></i>
+                {{ getRoleLabel(user.role) }}
+              </span>
+            </td>
+            <td>
+              @if(user.isBlocked) {
+                <span class="status-badge status-blocked">
+                  <i class="pi pi-lock"></i>
+                  Bloqueado
+                </span>
+              } @else if(user.active) {
+                <span class="status-badge status-active">
+                  <i class="pi pi-check-circle"></i>
+                  Ativo
+                </span>
+              } @else {
+                <span class="status-badge status-inactive">
+                  <i class="pi pi-times-circle"></i>
+                  Inativo
+                </span>
+              }
+            </td>
+            <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+            <td class="actions">
+              @if(user.isBlocked) {
+                <p-button
+                  icon="pi pi-unlock"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="success"
+                  (click)="onUnblockUser(user)"
+                  pTooltip="Desbloquear usuário"
+                  tooltipPosition="top"
+                />
+              } @else {
+                <p-button
+                  icon="pi pi-lock"
+                  [rounded]="true"
+                  [text]="true"
+                  severity="warn"
+                  (click)="onBlockUser(user)"
+                  pTooltip="Bloquear usuário"
+                  tooltipPosition="top"
+                />
+              }
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+                (click)="onDeleteUser(user)"
+                pTooltip="Excluir usuário"
+                tooltipPosition="top"
+              />
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</div>

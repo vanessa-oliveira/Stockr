@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stockr.Application.Commands.Users;
 using Stockr.Application.Queries.Users;
@@ -7,6 +8,7 @@ namespace Stockr.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -67,6 +69,7 @@ public class UserController : ControllerBase
     #region Commands
 
     [HttpPost]
+    [Authorize(Policy = "TenantAdmin")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserCommand command)
     {
         try
@@ -85,6 +88,7 @@ public class UserController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Policy = "TenantAdmin")]
     public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
     {
         try
@@ -104,6 +108,7 @@ public class UserController : ControllerBase
     }
     
     [HttpDelete("{id}")]
+    [Authorize(Policy = "TenantAdmin")]
     public async Task<IActionResult> Delete(Guid id)
     {
         try
@@ -119,6 +124,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPatch("{id}/block")]
+    [Authorize(Policy = "TenantAdmin")]
     public async Task<IActionResult> BlockUser(Guid id, [FromBody] BlockUserCommand command)
     {
         try
@@ -134,6 +140,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPatch("{id}/unblock")]
+    [Authorize(Policy = "TenantAdmin")]
     public async Task<IActionResult> UnblockUser(Guid id)
     {
         try

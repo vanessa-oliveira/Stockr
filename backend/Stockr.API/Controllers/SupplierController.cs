@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stockr.Application.Commands.Suppliers;
 using Stockr.Application.Queries.Suppliers;
@@ -7,6 +8,7 @@ namespace Stockr.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class SupplierController : ControllerBase
 {
     private readonly IMediator _mediator;

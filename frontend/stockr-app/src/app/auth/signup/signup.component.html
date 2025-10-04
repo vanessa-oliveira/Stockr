@@ -1,0 +1,184 @@
+<div class="signup-container">
+  <div class="signup-card">
+    <div class="signup-header">
+      <h1>Stockr</h1>
+      <p>Crie sua conta empresarial</p>
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3>Informações da Empresa</h3>
+
+        <div class="form-group">
+          <label for="tenantName">Nome da Empresa</label>
+          <input
+            type="text"
+            id="tenantName"
+            formControlName="tenantName"
+            class="form-control"
+            [class.is-invalid]="tenantName?.invalid && tenantName?.touched"
+            placeholder="Ex: Minha Loja LTDA"
+          >
+          @if(tenantName?.invalid && tenantName?.touched){
+            <div class="error-message">
+              @if(tenantName?.errors?.['required']){
+                <small>Nome da empresa é obrigatório</small>
+              }
+              @if(tenantName?.errors?.['minlength']){
+                <small>Nome deve ter no mínimo 3 caracteres</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="tenantDomain">Domínio Único</label>
+          <input
+            type="text"
+            id="tenantDomain"
+            formControlName="tenantDomain"
+            class="form-control"
+            [class.is-invalid]="tenantDomain?.invalid && tenantDomain?.touched"
+            placeholder="minha-loja"
+          >
+          <small class="form-hint">Somente letras minúsculas, números e hífen</small>
+          @if(tenantDomain?.invalid && tenantDomain?.touched){
+            <div class="error-message">
+              @if(tenantDomain?.errors?.['required']){
+                <small>Domínio é obrigatório</small>
+              }
+              @if(tenantDomain?.errors?.['minlength']){
+                <small>Domínio deve ter no mínimo 3 caracteres</small>
+              }
+              @if(tenantDomain?.errors?.['pattern']){
+                <small>Use apenas letras minúsculas, números e hífen</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="planType">Plano</label>
+          <select
+            id="planType"
+            formControlName="planType"
+            class="form-control"
+          >
+            @for(plan of planTypes; track plan.value){
+              <option [value]="plan.value">{{ plan.label }} - {{ plan.description }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Administrador</h3>
+
+        <div class="form-group">
+          <label for="adminName">Nome completo</label>
+          <input
+            type="text"
+            id="adminName"
+            formControlName="adminName"
+            class="form-control"
+            [class.is-invalid]="adminName?.invalid && adminName?.touched"
+            placeholder="Seu nome"
+          >
+          @if(adminName?.invalid && adminName?.touched){
+            <div class="error-message">
+              @if(adminName?.errors?.['required']){
+                <small>Nome é obrigatório</small>
+              }
+              @if(adminName?.errors?.['minlength']){
+                <small>Nome deve ter no mínimo 3 caracteres</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="adminEmail">Email</label>
+          <input
+            type="email"
+            id="adminEmail"
+            formControlName="adminEmail"
+            class="form-control"
+            [class.is-invalid]="adminEmail?.invalid && adminEmail?.touched"
+            placeholder="seu@email.com"
+          >
+          @if(adminEmail?.invalid && adminEmail?.touched){
+            <div class="error-message">
+              @if(adminEmail?.errors?.['required']){
+                <small>Email é obrigatório</small>
+              }
+              @if(adminEmail?.errors?.['email']){
+                <small>Email inválido</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="form-control"
+            [class.is-invalid]="password?.invalid && password?.touched"
+          >
+          <small class="form-hint">Mínimo 8 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais</small>
+          @if(password?.invalid && password?.touched){
+            <div class="error-message">
+              @if(password?.errors?.['required']){
+                <small>Senha é obrigatória</small>
+              }
+              @if(password?.errors?.['minlength']){
+                <small>Senha deve ter no mínimo 8 caracteres</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">Confirmar senha</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="form-control"
+            [class.is-invalid]="(confirmPassword?.invalid && confirmPassword?.touched) || signupForm.errors?.['passwordMismatch']"
+          >
+          @if(confirmPassword?.invalid && confirmPassword?.touched){
+            <div class="error-message">
+              @if(confirmPassword?.errors?.['required']){
+                <small>Confirmação de senha é obrigatória</small>
+              }
+              @if(signupForm.errors?.['passwordMismatch'] && confirmPassword?.touched){
+                <small>As senhas não coincidem</small>
+              }
+            </div>
+          }
+        </div>
+      </div>
+
+      @if(errorMessage){
+        <div class="error-alert">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <button
+        type="submit"
+        class="btn-signup"
+        [disabled]="loading || signupForm.invalid"
+      >
+        {{ loading ? 'Criando conta...' : 'Criar conta' }}
+      </button>
+
+      <div class="login-link">
+        Já tem uma conta? <a routerLink="/login">Faça login</a>
+      </div>
+    </form>
+  </div>
+</div>

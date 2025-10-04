@@ -1,5 +1,5 @@
 <div class="content">
-  <p-button label="Adicionar cliente" (click)="openCustomerForm()"/>
+  <p-button class="add-customer-button" label="Adicionar cliente" (click)="openCustomerForm()"/>
   <app-customer-form [(visible)]="visible" [customer]="selectedCustomer" (customerChanged)="loadCustomers()"></app-customer-form>
   <div class="list">
     <p-table [value]="customers" [tableStyle]="{ 'min-width': '50rem' }">

@@ -1,6 +1,13 @@
 <div class="content">
-  <p-button label="Adicionar categoria" (click)="openCategoryForm()"/>
+  <p-button
+    class="add-category-button"
+    label="Adicionar categoria"
+    icon="pi pi-plus"
+    (click)="openCategoryForm()"
+  />
+
   <app-category-form [(visible)]="visible" [category]="selectedCategory" (categoryChanged)="loadCategories()"></app-category-form>
+
   <div class="list">
     <p-table [value]="categories" [tableStyle]="{ 'min-width': '50rem' }">
       <ng-template #header>
@@ -12,11 +19,31 @@
       </ng-template>
       <ng-template #body let-category>
         <tr>
-          <td>{{ category.name }}</td>
+          <td>
+            <div class="category-name">
+              {{ category.name }}
+            </div>
+          </td>
           <td>{{ category.description }}</td>
-          <td class="actions" style="display: flex; gap: 8px;">
-            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editCategory(category)"></i>
-            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteCategory(category)"></i>
+          <td class="actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (click)="editCategory(category)"
+              pTooltip="Editar categoria"
+              tooltipPosition="top"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (click)="deleteCategory(category)"
+              pTooltip="Excluir categoria"
+              tooltipPosition="top"
+            />
           </td>
         </tr>
       </ng-template>

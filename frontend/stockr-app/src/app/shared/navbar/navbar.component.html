@@ -6,6 +6,34 @@
           <span class="logo-text">Stockr</span>
         </a>
       </div>
+
+      @if(currentUser){
+        <div class="nav-actions">
+          <div class="user-info">
+            <span class="user-name">{{ currentUser.name }}</span>
+            <span class="user-email">{{ currentUser.email }}</span>
+          </div>
+          <i
+            class="pi pi-sign-out"
+            style="color: slateblue; margin-right: 4px"
+            (click)="logout()"
+            pTooltip="Sair"
+            tooltipPosition="bottom"
+          >
+          </i>
+        </div>
+      }
+
+      @if(!currentUser){
+        <div class="nav-actions">
+          <a routerLink="/login" class="btn-link">
+            Entrar
+          </a>
+          <a routerLink="/signup" class="btn-primary">
+            Cadastrar
+          </a>
+        </div>
+      }
     </div>
   </div>
 </nav>

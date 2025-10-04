@@ -44,6 +44,28 @@
       width: 100%;
     }
 
+    ::ng-deep .p-select:not(.p-disabled).p-focus {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-inputnumber:not(.p-disabled).p-focus .p-inputtext {
+      border-color: #1293b3;
+      box-shadow: 0 0 0 0.2rem rgba(18, 147, 179, 0.25);
+    }
+
+    ::ng-deep .p-inputnumber .p-inputnumber-button {
+      &:hover {
+        background-color: rgba(18, 147, 179, 0.12);
+        color: #1293b3;
+      }
+
+      &:active {
+        background-color: #1293b3;
+        color: white;
+      }
+    }
+
     &.flex-1 {
       flex: 1;
     }
@@ -131,7 +153,7 @@
     .total-value {
       font-weight: 700;
       font-size: 1.25rem;
-      color: var(--p-primary-color);
+      color: #1293b3;
     }
   }
 
@@ -142,5 +164,29 @@
     margin-top: 1rem;
     padding-top: 1.5rem;
     border-top: 1px solid #e5e7eb;
+
+    ::ng-deep .save-button .p-button {
+      background-color: #1293b3;
+      border-color: #1293b3;
+
+      &:hover {
+        background-color: #076e87;
+        border-color: #076e87;
+      }
+    }
+  }
+}
+
+::ng-deep .p-select-list {
+  .p-select-option.p-selected,
+  .p-select-option.p-highlight,
+  .p-select-option.p-focus {
+    background: #1293b3 !important;
+    color: white !important;
+  }
+
+  .p-select-option:not(.p-disabled):not(.p-selected):not(.p-highlight):hover {
+    background: rgba(18, 147, 179, 0.12) !important;
+    color: #1293b3 !important;
   }
 }

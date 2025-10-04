@@ -1,12 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Stockr.Domain.Entities;
+using Stockr.Infrastructure.Interfaces;
 
 namespace Stockr.Infrastructure.Context;
 
 public class DataContext : DbContext
 {
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    private readonly ITenantContext? _tenantContext;
+
+    public DataContext(DbContextOptions<DataContext> options, ITenantContext? tenantContext = null) : base(options)
     {
+        _tenantContext = tenantContext;
     }
 
     public DbSet<User> Users { get; set; }
@@ -25,7 +29,7 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         ConfigureTenant(modelBuilder);
         ConfigureUser(modelBuilder);
         ConfigureCategory(modelBuilder);
@@ -39,6 +43,11 @@ public class DataContext : DbContext
         ConfigurePurchase(modelBuilder);
         ConfigurePurchaseItem(modelBuilder);
         ConfigureGlobalFilters(modelBuilder);
+    }
+
+    private Guid? GetCurrentTenantId()
+    {
+        return _tenantContext?.GetCurrentTenantId();
     }
 
     private static void ConfigureTenant(ModelBuilder modelBuilder)
@@ -389,19 +398,22 @@ public class DataContext : DbContext
         });
     }
 
-    private static void ConfigureGlobalFilters(ModelBuilder modelBuilder)
+    private void ConfigureGlobalFilters(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>().HasQueryFilter(e => !e.Deleted);
+        var tenantId = GetCurrentTenantId();
+        
         modelBuilder.Entity<Tenant>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Category>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Supplier>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Product>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Customer>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Inventory>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<InventoryMovement>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Sale>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<SaleItem>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<Purchase>().HasQueryFilter(e => !e.Deleted);
-        modelBuilder.Entity<PurchaseItem>().HasQueryFilter(e => !e.Deleted);
+        
+        modelBuilder.Entity<User>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Category>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Supplier>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Product>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Customer>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Inventory>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<InventoryMovement>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Sale>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<SaleItem>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<Purchase>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
+        modelBuilder.Entity<PurchaseItem>().HasQueryFilter(e => !e.Deleted && (!tenantId.HasValue || e.TenantId == tenantId));
     }
 }

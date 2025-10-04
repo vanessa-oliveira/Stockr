@@ -17,34 +17,54 @@ public class UserCommandHandler :
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordService _passwordService;
+    private readonly ITenantService _tenantService;
 
-    public UserCommandHandler(IUserRepository userRepository, IPasswordService passwordService)
+    public UserCommandHandler(
+        IUserRepository userRepository,
+        IPasswordService passwordService,
+        ITenantService tenantService)
     {
         _userRepository = userRepository;
         _passwordService = passwordService;
+        _tenantService = tenantService;
     }
 
     public async Task<Unit> Handle(CreateUserCommand command, CancellationToken cancellationToken)
     {
+        var currentTenantId = _tenantService.GetCurrentTenantId();
+        if (!currentTenantId.HasValue)
+        {
+            throw new UnauthorizedAccessException("User must belong to a tenant to create internal users");
+        }
+        
         var emailExists = await _userRepository.EmailExistsAsync(command.Email);
         if (emailExists)
         {
             throw new InvalidOperationException("Email already exists");
         }
-
-        // Valida a senha antes de criar o usuário
-        // if (!_passwordService.IsValidPassword(command.Password))
-        // {
-        //     throw new InvalidOperationException("Password does not meet security requirements. It must have at least 8 characters, including uppercase, lowercase, number and special character.");
-        // }
+        
+        if (!_passwordService.IsValidPassword(command.Password))
+        {
+            throw new InvalidOperationException("Password does not meet security requirements. It must have at least 8 characters, including uppercase, lowercase, number and special character.");
+        }
+        
+        if (command.Role == UserRole.TenantAdmin || command.Role == UserRole.SystemAdmin)
+        {
+            throw new InvalidOperationException("Cannot create users with TenantAdmin or SystemAdmin role. Use tenant signup for creating tenant admins.");
+        }
 
         var user = new User
         {
             Name = command.Name,
             Email = command.Email,
             Password = await _passwordService.HashPassword(command.Password),
-            Role = Enum.Parse<UserRole>(command.Role),
-            LastPasswordChange = DateTime.UtcNow
+            Role = command.Role,
+            TenantId = currentTenantId.Value,
+            Active = true,
+            IsBlocked = false,
+            LoginAttempts = 0,
+            LastPasswordChange = DateTime.UtcNow,
+            CreatedAt = DateTime.UtcNow
         };
 
         await _userRepository.AddAsync(user);
@@ -58,8 +78,12 @@ public class UserCommandHandler :
         {
             throw new ArgumentException("User not found");
         }
-
-        // Verifica se o novo email já existe em outro usuário
+        
+        if (!_tenantService.ValidateTenantAccess(user.TenantId))
+        {
+            throw new UnauthorizedAccessException("Cannot access users from other tenants");
+        }
+        
         if (user.Email != command.Email)
         {
             var emailExists = await _userRepository.EmailExistsAsync(command.Email);
@@ -85,6 +109,11 @@ public class UserCommandHandler :
         {
             throw new ArgumentException("User not found");
         }
+        
+        if (!_tenantService.ValidateTenantAccess(user.TenantId))
+        {
+            throw new UnauthorizedAccessException("Cannot delete users from other tenants");
+        }
 
         await _userRepository.DeleteAsync(user);
         return Unit.Value;
@@ -92,10 +121,21 @@ public class UserCommandHandler :
 
     public async Task<Unit> Handle(BlockUserCommand command, CancellationToken cancellationToken)
     {
+        var user = await _userRepository.GetByIdAsync(command.Id);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        
+        if (!_tenantService.ValidateTenantAccess(user.TenantId))
+        {
+            throw new UnauthorizedAccessException("Cannot block users from other tenants");
+        }
+
         var success = await _userRepository.BlockUserAsync(command.Id, command.BlockedUntil);
         if (!success)
         {
-            throw new ArgumentException("User not found or could not be blocked");
+            throw new ArgumentException("User could not be blocked");
         }
 
         return Unit.Value;
@@ -103,10 +143,21 @@ public class UserCommandHandler :
 
     public async Task<Unit> Handle(UnblockUserCommand command, CancellationToken cancellationToken)
     {
+        var user = await _userRepository.GetByIdAsync(command.Id);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        
+        if (!_tenantService.ValidateTenantAccess(user.TenantId))
+        {
+            throw new UnauthorizedAccessException("Cannot unblock users from other tenants");
+        }
+
         var success = await _userRepository.UnblockUserAsync(command.Id);
         if (!success)
         {
-            throw new ArgumentException("User not found or could not be unblocked");
+            throw new ArgumentException("User could not be unblocked");
         }
 
         return Unit.Value;
@@ -119,8 +170,12 @@ public class UserCommandHandler :
         {
             throw new ArgumentException("User not found");
         }
-
-        // Valida a nova senha antes de alterar
+        
+        if (!_tenantService.ValidateTenantAccess(user.TenantId))
+        {
+            throw new UnauthorizedAccessException("Cannot change password for users from other tenants");
+        }
+        
         if (!_passwordService.IsValidPassword(command.NewPassword))
         {
             throw new InvalidOperationException("Password does not meet security requirements. It must have at least 8 characters, including uppercase, lowercase, number and special character.");
@@ -128,7 +183,7 @@ public class UserCommandHandler :
 
         user.Password = await _passwordService.HashPassword(command.NewPassword);
         user.LastPasswordChange = DateTime.UtcNow;
-        user.LoginAttempts = 0; // Reset attempts on password change
+        user.LoginAttempts = 0;
         user.UpdatedAt = DateTime.UtcNow;
 
         await _userRepository.UpdateAsync(user);

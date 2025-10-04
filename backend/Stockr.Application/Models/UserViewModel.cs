@@ -17,4 +17,5 @@ public class UserViewModel
     public int LoginAttempts { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public Guid? TenantId { get; set; }
 }

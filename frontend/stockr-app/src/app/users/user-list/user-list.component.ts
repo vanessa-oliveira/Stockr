@@ -1,0 +1,163 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { UserService, UserListItem } from '../../services/user.service';
+import { UserRole } from '../../models/auth.model';
+import { ButtonModule } from 'primeng/button';
+import { TooltipModule } from 'primeng/tooltip';
+import { TableModule } from 'primeng/table';
+import { UserFormComponent } from '../user-form/user-form.component';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import {Router} from '@angular/router';
+
+@Component({
+  selector: 'app-user-list',
+  standalone: true,
+  imports: [CommonModule, ButtonModule, TooltipModule, TableModule, UserFormComponent, ConfirmDialogModule],
+  providers: [ConfirmationService],
+  templateUrl: './user-list.component.html',
+  styleUrl: './user-list.component.scss'
+})
+export class UserListComponent implements OnInit {
+  users: UserListItem[] = [];
+  loading = false;
+  errorMessage = '';
+  successMessage = '';
+  showCreateForm = false;
+
+  availableRoles = [
+    { value: UserRole.Manager, label: 'Gerente', description: 'Acesso total às operações' },
+    { value: UserRole.Seller, label: 'Vendedor', description: 'Vendas e consultas' },
+    { value: UserRole.StockController, label: 'Estoquista', description: 'Gestão de estoque' },
+    { value: UserRole.Cashier, label: 'Operador de Caixa', description: 'Vendas básicas' },
+    { value: UserRole.Viewer, label: 'Visualizador', description: 'Apenas consultas' }
+  ];
+
+  UserRole = UserRole;
+
+  constructor(private userService: UserService, private confirmationService: ConfirmationService) { }
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.userService.getAllUsers().subscribe({
+      next: (users) => {
+        this.users = users;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Erro ao carregar usuários';
+        this.loading = false;
+      }
+    });
+  }
+
+  openUserForm(): void {
+    this.showCreateForm = true;
+  }
+
+  onBlockUser(user: UserListItem): void {
+    this.confirmationService.confirm({
+      message: `Tem certeza que deseja bloquear o usuário ${user.name}?`,
+      header: 'Confirmar Bloqueio',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sim, bloquear',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        const blockedUntil = new Date();
+        blockedUntil.setHours(blockedUntil.getHours() + 24);
+
+        this.userService.blockUser(user.id, blockedUntil).subscribe({
+          next: () => {
+            this.successMessage = 'Usuário bloqueado com sucesso!';
+            this.loadUsers();
+            setTimeout(() => {
+              this.successMessage = '';
+            }, 3000);
+          },
+          error: (error) => {
+            this.errorMessage = error.error?.message || 'Erro ao bloquear usuário';
+          }
+        });
+      }
+    });
+  }
+
+  onUnblockUser(user: UserListItem): void {
+    this.userService.unblockUser(user.id).subscribe({
+      next: () => {
+        this.successMessage = 'Usuário desbloqueado com sucesso!';
+        this.loadUsers();
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Erro ao desbloquear usuário';
+      }
+    });
+  }
+
+  onDeleteUser(user: UserListItem): void {
+    if (!confirm(`Deseja realmente excluir o usuário ${user.name}? Esta ação não pode ser desfeita.`)) {
+      return;
+    }
+
+    this.userService.deleteUser(user.id).subscribe({
+      next: () => {
+        this.successMessage = 'Usuário excluído com sucesso!';
+        this.loadUsers();
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Erro ao excluir usuário';
+      }
+    });
+  }
+
+  getRoleLabel(role: UserRole): string {
+    const roleItem = this.availableRoles.find(r => r.value === role);
+    return roleItem?.label || 'Usuário';
+  }
+
+  getRoleBadgeClass(role: UserRole): string {
+    switch (role) {
+      case UserRole.Manager:
+        return 'badge-manager';
+      case UserRole.Seller:
+        return 'badge-seller';
+      case UserRole.StockController:
+        return 'badge-stock';
+      case UserRole.Cashier:
+        return 'badge-cashier';
+      case UserRole.Viewer:
+        return 'badge-viewer';
+      default:
+        return 'badge-default';
+    }
+  }
+
+  getRoleIcon(role: UserRole): string {
+    switch (role) {
+      case UserRole.Manager:
+        return 'pi pi-crown';
+      case UserRole.Seller:
+        return 'pi pi-shopping-bag';
+      case UserRole.StockController:
+        return 'pi pi-box';
+      case UserRole.Cashier:
+        return 'pi pi-dollar';
+      case UserRole.Viewer:
+        return 'pi pi-eye';
+      default:
+        return 'pi pi-user';
+    }
+  }
+}
