@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MoreLinq;
+using Stockr.Domain.Common;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Context;
 
@@ -10,6 +11,7 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task<T?> GetByIdAsync(Guid id);
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> GetAllActiveAsync();
+    Task<PagedResult<T>> GetPagedAsync(PaginationParams paginationParams);
     Task<bool> AddAsync(T entity);
     Task<bool> AddRangeAsync(IList<T> entities);
     Task<bool> UpdateAsync(T entity);
@@ -42,6 +44,20 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     public async Task<IEnumerable<T>> GetAllActiveAsync()
     {
         return await _dbSet.AsNoTracking().Where(e => e.Active).ToListAsync();
+    }
+
+    public virtual async Task<PagedResult<T>> GetPagedAsync(PaginationParams paginationParams)
+    {
+        var query = _dbSet.AsNoTracking().Where(e => !e.Deleted);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<T>(items, totalCount, paginationParams.PageNumber, paginationParams.PageSize);
     }
 
     public async Task<bool> AddAsync(T entity)

@@ -1,6 +1,7 @@
 .main-layout {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 70px);
+  margin-top: 70px;
   background-color: #f3f4f6;
 
   .sidebar {

@@ -2,12 +2,13 @@ using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Inventory;
+using Stockr.Domain.Common;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Queries;
 
 public class InventoryQueryHandler :
-    IRequestHandler<GetAllInventoryQuery, IEnumerable<InventoryViewModel>>,
+    IRequestHandler<GetInventoriesPagedQuery, PagedResult<InventoryViewModel>>,
     IRequestHandler<GetInventoryByIdQuery, InventoryViewModel?>,
     IRequestHandler<GetInventoryByProductIdQuery, InventoryViewModel?>
 {
@@ -17,11 +18,16 @@ public class InventoryQueryHandler :
     {
         _inventoryRepository = inventoryRepository;
     }
-
-    public async Task<IEnumerable<InventoryViewModel>> Handle(GetAllInventoryQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResult<InventoryViewModel>> Handle(GetInventoriesPagedQuery request, CancellationToken cancellationToken)
     {
-        var inventories = await _inventoryRepository.GetAllAsync();
-        return inventories.Adapt<IEnumerable<InventoryViewModel>>();
+        var paginationParams = new PaginationParams
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+
+        var inventories = await _inventoryRepository.GetPagedAsync(paginationParams);
+        return inventories.Adapt<PagedResult<InventoryViewModel>>();
     }
 
     public async Task<InventoryViewModel?> Handle(GetInventoryByIdQuery request, CancellationToken cancellationToken)

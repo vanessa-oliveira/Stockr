@@ -12,14 +12,23 @@
     <div class="form-row">
       <div class="form-field">
         <label for="supplierId">Fornecedor *</label>
-        <p-select
-          id="supplierId"
-          formControlName="supplierId"
-          [options]="suppliers"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Selecione um fornecedor">
-        </p-select>
+        @if(suppliers.length > 0) {
+          <p-select
+            id="supplierId"
+            formControlName="supplierId"
+            [options]="suppliers"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Selecione um fornecedor">
+          </p-select>
+        } @else {
+          <p-select
+            id="supplierId"
+            formControlName="supplierId"
+            [options]="[]"
+            placeholder="Carregando fornecedores...">
+          </p-select>
+        }
       </div>
 
       <div class="form-field">
@@ -62,15 +71,24 @@
           <div [formGroupName]="$index" class="item-row">
             <div class="form-field flex-2">
               <label [for]="'product-' + $index">Produto</label>
-              <p-select
-                [id]="'product-' + $index"
-                formControlName="productId"
-                [options]="products"
-                optionLabel="name"
-                optionValue="id"
-                placeholder="Selecione um produto"
-                (onChange)="onProductChange($index)">
-              </p-select>
+              @if(products.length > 0) {
+                <p-select
+                  [id]="'product-' + $index"
+                  formControlName="productId"
+                  [options]="products"
+                  optionLabel="name"
+                  optionValue="id"
+                  placeholder="Selecione um produto"
+                  (onChange)="onProductChange($index)">
+                </p-select>
+              } @else {
+                <p-select
+                  [id]="'product-' + $index"
+                  formControlName="productId"
+                  [options]="[]"
+                  placeholder="Carregando produtos...">
+                </p-select>
+              }
             </div>
 
             <div class="form-field flex-1">

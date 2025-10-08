@@ -2,7 +2,18 @@
   <p-button class="add-sale-button" label="Adicionar venda" (click)="openSaleForm()"/>
   <app-sale-form [(visible)]="visible" [sale]="selectedSale" (saleChanged)="loadSales()"></app-sale-form>
   <div class="list">
-    <p-table [value]="sales" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table
+      [value]="sales"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [lazy]="true"
+      (onPage)="pageChange($event)"
+      [rowsPerPageOptions]="[10, 20, 30, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    >
       <ng-template #header>
         <tr>
           <th>Data</th>
@@ -25,9 +36,25 @@
           </td>
           <td>{{ sale.saleItems?.length || 0 }} item(s)</td>
           <td>{{ sale.totalAmount | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</td>
-          <td class="actions" style="display: flex; gap: 8px;">
-            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editSale(sale)"></i>
-            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteSale(sale)"></i>
+          <td class="actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (click)="editSale(sale)"
+              pTooltip="Editar venda"
+              tooltipPosition="top"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (click)="deleteSale(sale)"
+              pTooltip="Excluir venda"
+              tooltipPosition="top"
+            />
           </td>
         </tr>
       </ng-template>

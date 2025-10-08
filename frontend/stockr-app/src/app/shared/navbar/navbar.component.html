@@ -1,36 +1,38 @@
 <nav class="landing-nav">
   <div class="container">
     <div class="nav-content">
-      <div class="logo">
-        <a routerLink="/" class="logo-link">
-          <span class="logo-text">Stockr</span>
-        </a>
+      <div class="logo" routerLink="/">
+        <i class="pi pi-box"></i>
+        <span class="logo-text">Stockr</span>
       </div>
 
       @if(currentUser){
-        <div class="nav-actions">
+        <div class="nav-actions logged-in">
           <div class="user-info">
-            <span class="user-name">{{ currentUser.name }}</span>
-            <span class="user-email">{{ currentUser.email }}</span>
+            <div class="user-details">
+              <span class="user-name">{{ currentUser.name }}</span>
+            </div>
+            <button
+              class="btn-logout"
+              (click)="logout()"
+              pTooltip="Sair"
+              tooltipPosition="bottom"
+            >
+              <i class="pi pi-sign-out"></i>
+            </button>
           </div>
-          <i
-            class="pi pi-sign-out"
-            style="color: slateblue; margin-right: 4px"
-            (click)="logout()"
-            pTooltip="Sair"
-            tooltipPosition="bottom"
-          >
-          </i>
         </div>
       }
 
       @if(!currentUser){
         <div class="nav-actions">
           <a routerLink="/login" class="btn-link">
-            Entrar
+            <i class="pi pi-sign-in"></i>
+            <span>Entrar</span>
           </a>
           <a routerLink="/signup" class="btn-primary">
-            Cadastrar
+            <i class="pi pi-sparkles"></i>
+            <span>Começar Grátis</span>
           </a>
         </div>
       }

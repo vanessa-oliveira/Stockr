@@ -9,7 +9,18 @@
   <app-category-form [(visible)]="visible" [category]="selectedCategory" (categoryChanged)="loadCategories()"></app-category-form>
 
   <div class="list">
-    <p-table [value]="categories" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table
+      [value]="categories"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [rowsPerPageOptions]="[10, 20, 30, 50]"
+      [lazy]="true"
+      (onPage)="pageChange($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    >
       <ng-template #header>
         <tr>
           <th>Nome</th>

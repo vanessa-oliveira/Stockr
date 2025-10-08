@@ -2,28 +2,24 @@ using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Sales;
+using Stockr.Domain.Common;
+using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
-namespace Stockr.Application.Handlers.Queries.Sales;
+namespace Stockr.Application.Handlers.Queries;
 
 public class SaleQueryHandler :
-    IRequestHandler<GetAllSalesQuery, IEnumerable<SaleViewModel>>,
     IRequestHandler<GetSaleByIdQuery, SaleViewModel?>,
     IRequestHandler<GetSalesByCustomerQuery, IEnumerable<SaleViewModel>>,
     IRequestHandler<GetSalesByPeriodQuery, IEnumerable<SaleViewModel>>,
-    IRequestHandler<GetSalesBySalespersonQuery, IEnumerable<SaleViewModel>>
+    IRequestHandler<GetSalesBySalespersonQuery, IEnumerable<SaleViewModel>>,
+    IRequestHandler<GetSalesPagedQuery, PagedResult<SaleViewModel>>
 {
     private readonly ISaleRepository _saleRepository;
 
     public SaleQueryHandler(ISaleRepository saleRepository)
     {
         _saleRepository = saleRepository;
-    }
-
-    public async Task<IEnumerable<SaleViewModel>> Handle(GetAllSalesQuery request, CancellationToken cancellationToken)
-    {
-        var sales = await _saleRepository.GetAllAsync();
-        return sales.Adapt<IEnumerable<SaleViewModel>>();
     }
 
     public async Task<SaleViewModel?> Handle(GetSaleByIdQuery request, CancellationToken cancellationToken)
@@ -48,5 +44,17 @@ public class SaleQueryHandler :
     {
         var sales = await _saleRepository.GetBySalespersonAsync(request.UserId);
         return sales.Adapt<IEnumerable<SaleViewModel>>();
+    }
+
+    public async Task<PagedResult<SaleViewModel>> Handle(GetSalesPagedQuery request, CancellationToken cancellationToken)
+    {
+        var paginationParams = new PaginationParams
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+        
+        var sales = await _saleRepository.GetPagedAsync(paginationParams);
+        return sales.Adapt<PagedResult<SaleViewModel>>();
     }
 }

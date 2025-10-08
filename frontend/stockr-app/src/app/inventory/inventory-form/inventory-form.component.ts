@@ -24,7 +24,7 @@ import { MessageService } from 'primeng/api';
   templateUrl: './inventory-form.component.html',
   styleUrl: './inventory-form.component.scss'
 })
-export class InventoryFormComponent implements OnChanges, OnInit {
+export class InventoryFormComponent implements OnChanges {
   @Input() visible: boolean = false;
   @Input() inventory: Inventory | null = null;
   @Output() visibleChange = new EventEmitter<boolean>();
@@ -57,13 +57,9 @@ export class InventoryFormComponent implements OnChanges, OnInit {
     return this.inventoryForm.get('minStock')?.value;
   }
 
-  ngOnInit() {
-    this.loadProducts();
-    this.loadInventory();
-  }
-
   ngOnChanges(changes: SimpleChanges) {
     if (changes['visible'] && this.visible) {
+      this.loadProducts();
       this.loadInventory();
     }
 

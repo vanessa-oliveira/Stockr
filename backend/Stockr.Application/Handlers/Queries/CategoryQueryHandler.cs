@@ -2,14 +2,14 @@ using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Categories;
-using Stockr.Domain.Entities;
+using Stockr.Domain.Common;
 using Stockr.Infrastructure.Repositories;
 
-namespace Stockr.Application.Handlers.Queries.Categories;
+namespace Stockr.Application.Handlers.Queries;
 
 public class CategoryQueryHandler :
-    IRequestHandler<GetAllCategoriesQuery, IEnumerable<CategoryViewModel>>,
-    IRequestHandler<GetCategoryByIdQuery, CategoryViewModel?>
+    IRequestHandler<GetCategoryByIdQuery, CategoryViewModel?>,
+    IRequestHandler<GetCategoriesPagedQuery, PagedResult<CategoryViewModel>>
 {
     private readonly ICategoryRepository _categoryRepository;
 
@@ -18,15 +18,21 @@ public class CategoryQueryHandler :
         _categoryRepository = categoryRepository;
     }
 
-    public async Task<IEnumerable<CategoryViewModel>> Handle(GetAllCategoriesQuery request, CancellationToken cancellationToken)
-    {
-        var categories = await _categoryRepository.GetAllAsync();
-        return categories.Adapt<IEnumerable<CategoryViewModel>>();
-    }
-
     public async Task<CategoryViewModel?> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
         var category = await _categoryRepository.GetByIdAsync(request.Id);
         return category.Adapt<CategoryViewModel>();
+    }
+
+    public async Task<PagedResult<CategoryViewModel>> Handle(GetCategoriesPagedQuery request, CancellationToken cancellationToken)
+    {
+        var paginationParams = new PaginationParams
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+        
+        var categories = await _categoryRepository.GetPagedAsync(paginationParams);
+        return categories.Adapt<PagedResult<CategoryViewModel>>();
     }
 }

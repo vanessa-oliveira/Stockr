@@ -20,14 +20,6 @@ public class PurchaseController : ControllerBase
 
     #region Queries
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllPurchases()
-    {
-        var query = new GetAllPurchasesQuery();
-        var purchases = await _mediator.Send(query);
-        return Ok(purchases);
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -64,6 +56,19 @@ public class PurchaseController : ControllerBase
         var query = new GetPurchasesByInvoiceNumberQuery { InvoiceNumber = invoiceNumber };
         var purchases = await _mediator.Send(query);
         return Ok(purchases);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetPurchasesPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetPurchasesPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Customer } from '../models/customer';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 export interface CreateCustomerRequest {
   name: string;
@@ -31,6 +32,14 @@ export class CustomerService {
 
   public getAllCustomers(): Observable<Array<Customer>> {
     return this.http.get<Array<Customer>>(this.apiUrl + "/customer");
+  }
+
+  public getCustomersPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Customer>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Customer>>(this.apiUrl + "/customer", { params });
   }
 
   public getCustomerById(id: string): Observable<Customer> {

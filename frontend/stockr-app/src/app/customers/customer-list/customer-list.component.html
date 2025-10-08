@@ -2,7 +2,18 @@
   <p-button class="add-customer-button" label="Adicionar cliente" (click)="openCustomerForm()"/>
   <app-customer-form [(visible)]="visible" [customer]="selectedCustomer" (customerChanged)="loadCustomers()"></app-customer-form>
   <div class="list">
-    <p-table [value]="customers" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table
+      [value]="customers"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [rowsPerPageOptions]="[10, 20, 30, 50]"
+      [lazy]="true"
+      (onPage)="pageChange($event)"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    >
       <ng-template #header>
         <tr>
           <th>Nome</th>
@@ -25,9 +36,25 @@
               <span>{{ customer.cnpj | mask: '00.000.000/0000-00' }}</span>
             }
           </td>
-          <td class="actions" style="display: flex; gap: 8px;">
-            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editCustomer(customer)"></i>
-            <i class="pi pi-trash" style="cursor: pointer;" (click)="deleteCustomer(customer)"></i>
+          <td class="actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (click)="editCustomer(customer)"
+              pTooltip="Editar cliente"
+              tooltipPosition="top"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (click)="deleteCustomer(customer)"
+              pTooltip="Excluir cliente"
+              tooltipPosition="top"
+            />
           </td>
         </tr>
       </ng-template>

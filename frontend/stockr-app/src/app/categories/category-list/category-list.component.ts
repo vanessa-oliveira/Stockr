@@ -7,6 +7,7 @@ import { ConfirmationService } from 'primeng/api';
 import {Category} from '../../models/category';
 import {CategoryService} from '../../services/category.service';
 import { CategoryFormComponent } from '../category-form/category-form.component';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-category-list',
@@ -27,6 +28,10 @@ export class CategoryListComponent {
     public visible: boolean = false;
     public selectedCategory: Category | null = null;
 
+    public pageNumber: number = 1;
+    public pageSize: number = 10;
+    public totalCount: number = 0;
+
     constructor(
       private categoryService: CategoryService,
       private confirmationService: ConfirmationService
@@ -35,10 +40,25 @@ export class CategoryListComponent {
     }
 
     loadCategories() {
-      this.categoryService.getAllCategories().subscribe({
-        next: (result) => this.categories = result,
+      this.categoryService.getCategoriesPaged(this.pageNumber, this.pageSize).subscribe({
+        next: (result: PagedResult<Category>) => {
+          this.categories = result.items;
+          this.totalCount = result.totalCount;
+        },
         error: (error) => console.error('Erro ao carregar categorias:', error)
       });
+    }
+
+    pageChange(event: any): void {
+      const first = event.first ?? 0;
+      const rows = event.rows ?? 10;
+      const page = Math.floor(first / rows) + 1;
+
+      if (this.pageNumber !== page || this.pageSize !== rows) {
+        this.pageNumber = page;
+        this.pageSize = rows;
+        this.loadCategories();
+      }
     }
 
   public openCategoryForm() {

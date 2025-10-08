@@ -19,27 +19,32 @@ public class CustomerController : ControllerBase
     }
 
     #region Queries
-
-    [HttpGet]
-    public async Task<IActionResult> GetAllCustomers()
-    {
-        var query = new GetAllCustomersQuery();
-        var customers = await _mediator.Send(query);
-        return Ok(customers);
-    }
-
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetCustomerByIdQuery { Id = id };
         var customer = await _mediator.Send(query);
-        
+
         if (customer == null)
         {
             return NotFound();
         }
 
         return Ok(customer);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCustomersPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetCustomersPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

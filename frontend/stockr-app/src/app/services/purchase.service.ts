@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Purchase } from '../models/purchase';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 export interface CreatePurchaseItemRequest {
   productId: string;
@@ -37,6 +38,14 @@ export class PurchaseService {
 
   public getAllPurchases(): Observable<Array<Purchase>> {
     return this.http.get<Array<Purchase>>(this.apiUrl + "/purchase");
+  }
+
+  public getPurchasesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Purchase>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Purchase>>(this.apiUrl + "/purchase", { params });
   }
 
   public getPurchaseById(id: string): Observable<Purchase> {

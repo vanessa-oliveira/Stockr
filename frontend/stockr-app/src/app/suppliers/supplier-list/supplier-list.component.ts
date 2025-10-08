@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
+import {TableLazyLoadEvent, TableModule} from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
@@ -8,6 +8,7 @@ import { Supplier } from '../../models/supplier';
 import { SupplierService } from '../../services/supplier.service';
 import { SupplierFormComponent } from '../supplier-form/supplier-form.component';
 import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-supplier-list',
@@ -29,6 +30,10 @@ export class SupplierListComponent {
   public visible: boolean = false;
   public selectedSupplier: Supplier | null = null;
 
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public totalCount: number = 0;
+
   constructor(
     private supplierService: SupplierService,
     private confirmationService: ConfirmationService
@@ -37,10 +42,25 @@ export class SupplierListComponent {
   }
 
   loadSuppliers() {
-    this.supplierService.getAllSuppliers().subscribe({
-      next: (result) => this.suppliers = result,
+    this.supplierService.getSuppliersPaged(this.pageNumber, this.pageSize).subscribe({
+      next: (result: PagedResult<Supplier>) => {
+        this.suppliers = result.items;
+        this.totalCount = result.totalCount;
+      },
       error: (error) => console.error('Erro ao carregar fornecedores:', error)
     });
+  }
+
+  pageChange(event: any): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 10;
+    const page = Math.floor(first / rows) + 1;
+
+    if (this.pageNumber !== page || this.pageSize !== rows) {
+      this.pageNumber = page;
+      this.pageSize = rows;
+      this.loadSuppliers();
+    }
   }
 
   public openSupplierForm() {

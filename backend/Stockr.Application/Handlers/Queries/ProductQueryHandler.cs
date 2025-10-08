@@ -2,13 +2,16 @@ using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Products;
+using Stockr.Domain.Common;
+using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
-namespace Stockr.Application.Handlers.Queries.Products;
+namespace Stockr.Application.Handlers.Queries;
 
 public class ProductQueryHandler :
     IRequestHandler<GetAllProductsQuery, IEnumerable<ProductViewModel>>,
-    IRequestHandler<GetProductByIdQuery, ProductViewModel?>
+    IRequestHandler<GetProductByIdQuery, ProductViewModel?>,
+    IRequestHandler<GetProductsPagedQuery, PagedResult<ProductViewModel>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -27,5 +30,17 @@ public class ProductQueryHandler :
     {
         var product = await _productRepository.GetByIdAsync(request.Id);
         return product.Adapt<ProductViewModel>();
+    }
+
+    public async Task<PagedResult<ProductViewModel>> Handle(GetProductsPagedQuery request, CancellationToken cancellationToken)
+    {
+        var paginationParams = new PaginationParams
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+        
+        var products = await _productRepository.GetPagedAsync(paginationParams);
+        return products.Adapt<PagedResult<ProductViewModel>>();
     }
 }

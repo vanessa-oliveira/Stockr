@@ -21,9 +21,13 @@ public class UserController : ControllerBase
     #region Queries
 
     [HttpGet]
-    public async Task<IActionResult> GetAllUsers()
+    public async Task<IActionResult> GetUsersPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var query = new GetAllUsersQuery();
+        var query = new GetUsersPagedQuery()
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
         var users = await _mediator.Send(query);
         return Ok(users);
     }

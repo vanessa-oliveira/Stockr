@@ -22,11 +22,16 @@ public class InventoryController : ControllerBase
     #region Queries
 
     [HttpGet]
-    public async Task<IActionResult> GetAllInventory()
+    public async Task<IActionResult> GetInventoriesPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
-        var query = new GetAllInventoryQuery();
-        var inventory = await _mediator.Send(query);
-        return Ok(inventory);
+        var query = new GetInventoriesPagedQuery()
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     [HttpGet("{id}")]

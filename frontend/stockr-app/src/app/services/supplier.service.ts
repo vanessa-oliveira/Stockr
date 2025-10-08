@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Supplier, CreateSupplierRequest, UpdateSupplierRequest } from '../models/supplier';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,14 @@ export class SupplierService {
 
   public getAllSuppliers(): Observable<Array<Supplier>> {
     return this.http.get<Array<Supplier>>(this.apiUrl + "/supplier");
+  }
+
+  public getSuppliersPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Supplier>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Supplier>>(this.apiUrl + "/supplier", { params });
   }
 
   public getSupplierById(id: string): Observable<Supplier> {

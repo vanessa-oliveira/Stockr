@@ -20,14 +20,6 @@ public class SaleController : ControllerBase
 
     #region Queries
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllSales()
-    {
-        var query = new GetAllSalesQuery();
-        var sales = await _mediator.Send(query);
-        return Ok(sales);
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -64,6 +56,19 @@ public class SaleController : ControllerBase
         var query = new GetSalesByPeriodQuery { StartDate = startDate, EndDate = endDate };
         var sales = await _mediator.Send(query);
         return Ok(sales);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSalesPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetSalesPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

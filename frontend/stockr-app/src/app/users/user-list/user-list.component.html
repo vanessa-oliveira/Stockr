@@ -32,14 +32,25 @@
         <i class="pi pi-spin pi-spinner"></i>
         Carregando usuários...
       </div>
-    } @else if(users.length === 0) {
+    } @else if(users == null || users?.length === 0) {
       <div class="empty-state">
         <i class="pi pi-users"></i>
         <p>Nenhum usuário cadastrado ainda.</p>
         <p>Clique em "Adicionar usuário" para criar o primeiro usuário.</p>
       </div>
     } @else {
-      <p-table [value]="users" [tableStyle]="{ 'min-width': '70rem' }">
+      <p-table
+        [value]="users"
+        [tableStyle]="{ 'min-width': '70rem' }"
+        [paginator]="true"
+        [rows]="pageSize"
+        [totalRecords]="totalCount"
+        [lazy]="true"
+        (onPage)="pageChange($event)"
+        [rowsPerPageOptions]="[10, 20, 30, 50]"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+      >
         <ng-template #header>
           <tr>
             <th>Nome</th>

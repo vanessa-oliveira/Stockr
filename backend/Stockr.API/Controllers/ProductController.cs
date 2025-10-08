@@ -33,13 +33,26 @@ public class ProductController : ControllerBase
     {
         var query = new GetProductByIdQuery { Id = id };
         var product = await _mediator.Send(query);
-        
+
         if (product == null)
         {
             return NotFound();
         }
 
         return Ok(product);
+    }
+
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetProductsPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetProductsPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Stockr.Domain.Common;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Context;
 
@@ -8,6 +9,7 @@ public interface IProductRepository : IGenericRepository<Product>
 {
     new Task<Product?> GetByIdAsync(Guid id);
     new Task<IEnumerable<Product>> GetAllAsync();
+    new Task<PagedResult<Product>> GetPagedAsync(PaginationParams paginationParams);
     Task<Product?> GetBySkuAsync(string sku);
     Task<IEnumerable<Product>> GetByCategoryAsync(Guid categoryId);
     Task<IEnumerable<Product>> GetBySupplierAsync(Guid supplierId);
@@ -72,5 +74,23 @@ public class ProductRepository : GenericRepository<Product>, IProductRepository
     public async Task<IList<Product>> GetByIdsAsync(List<Guid> productIds)
     {
         return await _dbSet.AsNoTracking().Where(x => productIds.Contains(x.Id)).ToListAsync();
+    }
+
+    public override async Task<PagedResult<Product>> GetPagedAsync(PaginationParams paginationParams)
+    {
+        var query = _dbSet.AsNoTracking()
+            .Where(e => !e.Deleted)
+            .Include(p => p.Category)
+            .Include(p => p.Supplier);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(x => x.Id)
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<Product>(items, totalCount, paginationParams.PageNumber, paginationParams.PageSize);
     }
 }

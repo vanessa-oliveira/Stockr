@@ -2,12 +2,14 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { Sale, SaleStatus } from '../../models/sale';
 import { SaleService } from '../../services/sale.service';
 import { SaleFormComponent } from '../sale-form/sale-form.component';
 import { CommonModule } from '@angular/common';
 import { TagModule } from 'primeng/tag';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-sale-list',
@@ -17,6 +19,7 @@ import { TagModule } from 'primeng/tag';
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
+    TooltipModule,
     SaleFormComponent,
     TagModule
   ],
@@ -29,6 +32,10 @@ export class SaleListComponent {
   public visible: boolean = false;
   public selectedSale: Sale | null = null;
 
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public totalCount: number = 0;
+
   constructor(
     private saleService: SaleService,
     private confirmationService: ConfirmationService
@@ -37,10 +44,25 @@ export class SaleListComponent {
   }
 
   loadSales() {
-    this.saleService.getAllSales().subscribe({
-      next: (result) => this.sales = result,
+    this.saleService.getSalesPaged(this.pageNumber, this.pageSize).subscribe({
+      next: (result: PagedResult<Sale>) => {
+        this.sales = result.items;
+        this.totalCount = result.totalCount;
+      },
       error: (error) => console.error('Erro ao carregar vendas:', error)
     });
+  }
+
+  pageChange(event: any): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 10;
+    const page = Math.floor(first / rows) + 1;
+
+    if (this.pageNumber !== page || this.pageSize !== rows) {
+      this.pageNumber = page;
+      this.pageSize = rows;
+      this.loadSales();
+    }
   }
 
   public openSaleForm() {

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Stockr.Domain.Common;
 using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Context;
 
@@ -7,6 +8,7 @@ namespace Stockr.Infrastructure.Repositories;
 public interface IPurchaseRepository : IGenericRepository<Purchase>
 {
     new Task<IEnumerable<Purchase>> GetAllAsync();
+    new Task<PagedResult<Purchase>> GetPagedAsync(PaginationParams paginationParams);
     Task<IEnumerable<Purchase>> GetBySupplierAsync(Guid supplierId);
     Task<IEnumerable<Purchase>> GetByPeriodAsync(DateTime startDate, DateTime endDate);
     Task<Purchase?> GetWithItemsAsync(Guid id);
@@ -70,5 +72,23 @@ public class PurchaseRepository : GenericRepository<Purchase>, IPurchaseReposito
             .Where(p => p.InvoiceNumber.Contains(invoiceNumber))
             .OrderByDescending(p => p.PurchaseDate)
             .ToListAsync();
+    }
+
+    public override async Task<PagedResult<Purchase>> GetPagedAsync(PaginationParams paginationParams)
+    {
+        var query = _dbSet.AsNoTracking()
+            .Where(e => !e.Deleted)
+            .Include(p => p.Supplier)
+            .Include(p => p.PurchaseItems)
+            .OrderByDescending(p => p.PurchaseDate);
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((paginationParams.PageNumber - 1) * paginationParams.PageSize)
+            .Take(paginationParams.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<Purchase>(items, totalCount, paginationParams.PageNumber, paginationParams.PageSize);
     }
 }

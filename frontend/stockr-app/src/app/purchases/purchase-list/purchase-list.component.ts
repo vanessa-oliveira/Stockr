@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TooltipModule } from 'primeng/tooltip';
 import { ConfirmationService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { Purchase } from '../../models/purchase';
 import { PurchaseService } from '../../services/purchase.service';
 import { PurchaseFormComponent } from '../purchase-form/purchase-form.component';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-purchase-list',
@@ -16,6 +18,7 @@ import { PurchaseFormComponent } from '../purchase-form/purchase-form.component'
     TableModule,
     ButtonModule,
     ConfirmDialogModule,
+    TooltipModule,
     PurchaseFormComponent
   ],
   providers: [ConfirmationService],
@@ -27,6 +30,10 @@ export class PurchaseListComponent {
   public visible: boolean = false;
   public selectedPurchase: Purchase | null = null;
 
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public totalCount: number = 0;
+
   constructor(
     private purchaseService: PurchaseService,
     private confirmationService: ConfirmationService
@@ -35,10 +42,25 @@ export class PurchaseListComponent {
   }
 
   loadPurchases() {
-    this.purchaseService.getAllPurchases().subscribe({
-      next: (result) => this.purchases = result,
+    this.purchaseService.getPurchasesPaged(this.pageNumber, this.pageSize).subscribe({
+      next: (result: PagedResult<Purchase>) => {
+        this.purchases = result.items;
+        this.totalCount = result.totalCount;
+      },
       error: (error) => console.error('Erro ao carregar compras:', error)
     });
+  }
+
+  pageChange(event: any): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 10;
+    const page = Math.floor(first / rows) + 1;
+
+    if (this.pageNumber !== page || this.pageSize !== rows) {
+      this.pageNumber = page;
+      this.pageSize = rows;
+      this.loadPurchases();
+    }
   }
 
   public openPurchaseForm() {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TableModule } from 'primeng/table';
+import { TableModule, TableLazyLoadEvent } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { TooltipModule } from 'primeng/tooltip';
@@ -8,6 +8,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Product } from '../../models/product';
 import { ProductService } from '../../services/product.service';
 import { ProductFormComponent } from '../product-form/product-form.component';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-product-list',
@@ -29,6 +30,10 @@ export class ProductListComponent {
   public visible: boolean = false;
   public selectedProduct: Product | null = null;
 
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public totalCount: number = 0;
+
   constructor(
     private productService: ProductService,
     private confirmationService: ConfirmationService
@@ -37,10 +42,25 @@ export class ProductListComponent {
   }
 
   loadProducts() {
-    this.productService.getAllProducts().subscribe({
-      next: (result) => this.products = result,
+    this.productService.getProductsPaged(this.pageNumber, this.pageSize).subscribe({
+      next: (result: PagedResult<Product>) => {
+        this.products = result.items;
+        this.totalCount = result.totalCount;
+      },
       error: (error) => console.error('Erro ao carregar produtos:', error)
     });
+  }
+
+  pageChange(event: any): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 10;
+    const page = Math.floor(first / rows) + 1;
+
+    if (this.pageNumber !== page || this.pageSize !== rows) {
+      this.pageNumber = page;
+      this.pageSize = rows;
+      this.loadProducts();
+    }
   }
 
   public openProductForm() {

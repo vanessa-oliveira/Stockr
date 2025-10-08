@@ -9,7 +9,18 @@
   <app-supplier-form [(visible)]="visible" [supplier]="selectedSupplier" (supplierChanged)="loadSuppliers()"></app-supplier-form>
 
   <div class="list">
-    <p-table [value]="suppliers" [tableStyle]="{ 'min-width': '50rem' }">
+    <p-table
+      [value]="suppliers"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [lazy]="true"
+      (onPage)="pageChange($event)"
+      [rowsPerPageOptions]="[10, 20, 30, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    >
       <ng-template #header>
         <tr>
           <th>Nome</th>

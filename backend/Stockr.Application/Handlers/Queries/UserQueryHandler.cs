@@ -2,12 +2,14 @@ using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Users;
+using Stockr.Domain.Common;
 using Stockr.Infrastructure.Repositories;
 
-namespace Stockr.Application.Handlers.Queries.Users;
+namespace Stockr.Application.Handlers.Queries;
 
 public class UserQueryHandler :
     IRequestHandler<GetAllUsersQuery, IEnumerable<UserViewModel>>,
+    IRequestHandler<GetUsersPagedQuery, PagedResult<UserViewModel>>,
     IRequestHandler<GetUserByIdQuery, UserViewModel?>,
     IRequestHandler<GetUserByEmailQuery, UserViewModel?>,
     IRequestHandler<GetBlockedUsersQuery, IEnumerable<UserViewModel>>
@@ -23,6 +25,18 @@ public class UserQueryHandler :
     {
         var users = await _userRepository.GetAllAsync();
         return users.Adapt<IEnumerable<UserViewModel>>();
+    }
+    
+    public async Task<PagedResult<UserViewModel>> Handle(GetUsersPagedQuery request, CancellationToken cancellationToken)
+    {
+        var paginationParams = new PaginationParams()
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+        
+        var users = await _userRepository.GetPagedAsync(paginationParams);
+        return users.Adapt<PagedResult<UserViewModel>>();
     }
 
     public async Task<UserViewModel?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)

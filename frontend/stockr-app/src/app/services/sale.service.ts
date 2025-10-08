@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Sale } from '../models/sale';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 export interface CreateSaleItemRequest {
   productId: string;
@@ -41,6 +42,14 @@ export class SaleService {
 
   public getAllSales(): Observable<Array<Sale>> {
     return this.http.get<Array<Sale>>(this.apiUrl + "/sale");
+  }
+
+  public getSalesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Sale>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Sale>>(this.apiUrl + "/sale", { params });
   }
 
   public getSaleById(id: string): Observable<Sale> {

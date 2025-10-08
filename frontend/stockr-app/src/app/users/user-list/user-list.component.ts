@@ -8,7 +8,7 @@ import { TableModule } from 'primeng/table';
 import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import {Router} from '@angular/router';
+import { PagedResult } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-user-list',
@@ -25,6 +25,10 @@ export class UserListComponent implements OnInit {
   successMessage = '';
   showCreateForm = false;
 
+  public pageNumber: number = 1;
+  public pageSize: number = 10;
+  public totalCount: number = 0;
+
   availableRoles = [
     { value: UserRole.Manager, label: 'Gerente', description: 'Acesso total às operações' },
     { value: UserRole.Seller, label: 'Vendedor', description: 'Vendas e consultas' },
@@ -32,8 +36,6 @@ export class UserListComponent implements OnInit {
     { value: UserRole.Cashier, label: 'Operador de Caixa', description: 'Vendas básicas' },
     { value: UserRole.Viewer, label: 'Visualizador', description: 'Apenas consultas' }
   ];
-
-  UserRole = UserRole;
 
   constructor(private userService: UserService, private confirmationService: ConfirmationService) { }
 
@@ -45,9 +47,10 @@ export class UserListComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.userService.getAllUsers().subscribe({
-      next: (users) => {
-        this.users = users;
+    this.userService.getUsersPaged(this.pageNumber, this.pageSize).subscribe({
+      next: (result: PagedResult<UserListItem>) => {
+        this.users = result.items;
+        this.totalCount = result.totalCount;
         this.loading = false;
       },
       error: (error) => {
@@ -55,6 +58,18 @@ export class UserListComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  pageChange(event: any): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 10;
+    const page = Math.floor(first / rows) + 1;
+
+    if (this.pageNumber !== page || this.pageSize !== rows) {
+      this.pageNumber = page;
+      this.pageSize = rows;
+      this.loadUsers();
+    }
   }
 
   openUserForm(): void {

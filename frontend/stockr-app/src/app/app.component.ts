@@ -15,13 +15,13 @@ export class AppComponent {
   title = 'stockr-app';
   showNavbar = true;
 
-  private authRoutes = ['/login', '/signup'];
+  private routesWithoutNavbar = ['/login', '/signup'];
 
   constructor(private router: Router) {
     this.router.events.pipe(
       filter((event): event is NavigationEnd => event instanceof NavigationEnd)
     ).subscribe(event => {
-      this.showNavbar = !this.authRoutes.includes(event.url);
+      this.showNavbar = !this.routesWithoutNavbar.includes(event.url);
     });
   }
 }

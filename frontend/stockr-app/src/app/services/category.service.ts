@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Category} from '../models/category';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,14 @@ export class CategoryService {
 
   public getAllCategories(): Observable<Array<Category>> {
     return this.http.get<Array<Category>>(this.apiUrl + "/category");
+  }
+
+  public getCategoriesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Category>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Category>>(this.apiUrl + "/category", { params });
   }
 
   public addCategory(category: Category): Observable<void> {

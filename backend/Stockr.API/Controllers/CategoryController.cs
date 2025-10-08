@@ -20,26 +20,31 @@ public class CategoryController : ControllerBase
 
     #region Queries
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllCategories()
-    {
-        var query = new GetAllCategoriesQuery();
-        var categories = await _mediator.Send(query);
-        return Ok(categories);
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetCategoryByIdQuery { Id = id };
         var category = await _mediator.Send(query);
-        
+
         if (category == null)
         {
             return NotFound();
         }
 
         return Ok(category);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCategoriesPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetCategoriesPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

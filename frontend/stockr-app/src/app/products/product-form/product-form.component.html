@@ -28,26 +28,44 @@
     <div class="form-row">
       <div class="form-field">
         <label for="categoryId">Categoria *</label>
-        <p-select
-          id="categoryId"
-          formControlName="categoryId"
-          [options]="categories"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Selecione uma categoria">
-        </p-select>
+        @if(categories.length > 0) {
+          <p-select
+            id="categoryId"
+            formControlName="categoryId"
+            [options]="categories"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Selecione uma categoria">
+          </p-select>
+        } @else {
+          <p-select
+            id="categoryId"
+            formControlName="categoryId"
+            [options]="[]"
+            placeholder="Carregando categorias...">
+          </p-select>
+        }
       </div>
 
       <div class="form-field">
         <label for="supplierId">Fornecedor</label>
-        <p-select
-          id="supplierId"
-          formControlName="supplierId"
-          [options]="suppliers"
-          optionLabel="name"
-          optionValue="id"
-          placeholder="Selecione um fornecedor">
-        </p-select>
+        @if(suppliers.length > 0) {
+          <p-select
+            id="supplierId"
+            formControlName="supplierId"
+            [options]="suppliers"
+            optionLabel="name"
+            optionValue="id"
+            placeholder="Selecione um fornecedor">
+          </p-select>
+        } @else {
+          <p-select
+            id="supplierId"
+            formControlName="supplierId"
+            [options]="[]"
+            placeholder="Carregando fornecedores...">
+          </p-select>
+        }
       </div>
     </div>
 

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Inventory } from '../models/inventory';
 import { environment } from '../../environments/environment';
+import { PagedResult } from '../models/pagination.model';
 
 export interface CreateInventoryRequest {
   productId: string;
@@ -26,6 +27,14 @@ export class InventoryService {
 
   getAllInventory(): Observable<Inventory[]> {
     return this.http.get<Inventory[]>(this.apiUrl);
+  }
+
+  getInventoryPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Inventory>> {
+    const params = new HttpParams()
+      .set('pageNumber', pageNumber.toString())
+      .set('pageSize', pageSize.toString());
+
+    return this.http.get<PagedResult<Inventory>>(`${this.apiUrl}`, { params });
   }
 
   getInventoryById(id: string): Observable<Inventory> {

@@ -91,22 +91,33 @@
       <label for="role">
         Perfil
       </label>
-      <p-select
-        id="role"
-        formControlName="role"
-        [options]="availableRoles"
-        optionLabel="label"
-        optionValue="value"
-        placeholder="Selecione o perfil"
-        appendTo="body"
-      >
-        <ng-template #item let-option>
-          <div class="role-option">
-            <div class="role-label">{{ option.label }}</div>
-            <div class="role-description">{{ option.description }}</div>
-          </div>
-        </ng-template>
-      </p-select>
+      @if(availableRoles.length > 0) {
+        <p-select
+          id="role"
+          formControlName="role"
+          [options]="availableRoles"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Selecione o perfil"
+          appendTo="body"
+        >
+          <ng-template #item let-option>
+            <div class="role-option">
+              <div class="role-label">{{ option.label }}</div>
+              <div class="role-description">{{ option.description }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+      } @else {
+        <p-select
+          id="role"
+          formControlName="role"
+          [options]="[]"
+          placeholder="Carregando perfis..."
+          appendTo="body"
+        >
+        </p-select>
+      }
     </div>
 
     <div class="dialog-actions">

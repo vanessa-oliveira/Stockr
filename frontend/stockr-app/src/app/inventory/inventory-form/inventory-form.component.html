@@ -10,15 +10,25 @@
 
     <div class="form-field full-width">
       <label for="productId">Produto *</label>
-      <p-select
-        required
-        id="productId"
-        formControlName="productId"
-        [options]="availableProducts"
-        optionLabel="name"
-        optionValue="id"
-        placeholder="Selecione um produto">
-      </p-select>
+      @if(availableProducts.length > 0) {
+        <p-select
+          required
+          id="productId"
+          formControlName="productId"
+          [options]="availableProducts"
+          optionLabel="name"
+          optionValue="id"
+          placeholder="Selecione um produto">
+        </p-select>
+      } @else {
+        <p-select
+          required
+          id="productId"
+          formControlName="productId"
+          [options]="[]"
+          placeholder="Carregando produtos...">
+        </p-select>
+      }
     </div>
 
     <div class="form-row">

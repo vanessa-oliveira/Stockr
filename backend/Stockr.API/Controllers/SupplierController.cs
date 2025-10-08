@@ -20,26 +20,31 @@ public class SupplierController : ControllerBase
 
     #region Queries
 
-    [HttpGet]
-    public async Task<IActionResult> GetAllSuppliers()
-    {
-        var query = new GetAllSuppliersQuery();
-        var suppliers = await _mediator.Send(query);
-        return Ok(suppliers);
-    }
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var query = new GetSupplierByIdQuery { Id = id };
         var supplier = await _mediator.Send(query);
-        
+
         if (supplier == null)
         {
             return NotFound();
         }
 
         return Ok(supplier);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetSuppliersPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
+    {
+        var query = new GetSuppliersPagedQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+
+        var result = await _mediator.Send(query);
+        return Ok(result);
     }
 
     #endregion

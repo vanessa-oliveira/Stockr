@@ -1,28 +1,24 @@
+using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Purchase;
+using Stockr.Domain.Common;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Queries;
 
-public class PurchaseQueryHandler : 
-    IRequestHandler<GetAllPurchasesQuery, IEnumerable<PurchaseViewModel>>,
+public class PurchaseQueryHandler :
     IRequestHandler<GetPurchaseByIdQuery, PurchaseViewModel?>,
     IRequestHandler<GetPurchasesBySupplierQuery, IEnumerable<PurchaseViewModel>>,
     IRequestHandler<GetPurchasesByPeriodQuery, IEnumerable<PurchaseViewModel>>,
-    IRequestHandler<GetPurchasesByInvoiceNumberQuery, IEnumerable<PurchaseViewModel>>
+    IRequestHandler<GetPurchasesByInvoiceNumberQuery, IEnumerable<PurchaseViewModel>>,
+    IRequestHandler<GetPurchasesPagedQuery, PagedResult<PurchaseViewModel>>
 {
     private readonly IPurchaseRepository _purchaseRepository;
 
     public PurchaseQueryHandler(IPurchaseRepository purchaseRepository)
     {
         _purchaseRepository = purchaseRepository;
-    }
-
-    public async Task<IEnumerable<PurchaseViewModel>> Handle(GetAllPurchasesQuery request, CancellationToken cancellationToken)
-    {
-        var purchases = await _purchaseRepository.GetAllAsync();
-        return purchases.Select(MapToViewModel);
     }
 
     public async Task<PurchaseViewModel?> Handle(GetPurchaseByIdQuery request, CancellationToken cancellationToken)
@@ -47,6 +43,18 @@ public class PurchaseQueryHandler :
     {
         var purchases = await _purchaseRepository.GetByInvoiceNumberAsync(request.InvoiceNumber);
         return purchases.Select(MapToViewModel);
+    }
+
+    public async Task<PagedResult<PurchaseViewModel>> Handle(GetPurchasesPagedQuery request, CancellationToken cancellationToken)
+    {
+        var paginationParams = new PaginationParams
+        {
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize
+        };
+        
+        var purchases = await _purchaseRepository.GetPagedAsync(paginationParams);
+        return purchases.Adapt<PagedResult<PurchaseViewModel>>();
     }
 
     private static PurchaseViewModel MapToViewModel(Domain.Entities.Purchase purchase)

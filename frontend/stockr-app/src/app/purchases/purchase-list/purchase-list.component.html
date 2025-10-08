@@ -2,7 +2,18 @@
   <p-button class="add-purchase-button" label="Adicionar compra" (click)="openPurchaseForm()"/>
   <app-purchase-form [(visible)]="visible" [purchase]="selectedPurchase" (purchaseChanged)="loadPurchases()"></app-purchase-form>
   <div class="list">
-    <p-table [value]="purchases" [tableStyle]="{ 'min-width': '70rem' }">
+    <p-table
+      [value]="purchases"
+      [tableStyle]="{ 'min-width': '70rem' }"
+      [paginator]="true"
+      [rows]="pageSize"
+      [totalRecords]="totalCount"
+      [lazy]="true"
+      (onPage)="pageChange($event)"
+      [rowsPerPageOptions]="[10, 20, 30, 50]"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+    >
       <ng-template #header>
         <tr>
           <th>Nota Fiscal</th>
@@ -20,9 +31,25 @@
           <td>{{ purchase.purchaseDate | date:'dd/MM/yyyy' }}</td>
           <td>{{ purchase.totalAmount | currency:'BRL':'symbol':'1.2-2' }}</td>
           <td>{{ purchase.purchaseItems.length }}</td>
-          <td class="actions" style="display: flex; gap: 8px;">
-            <i class="pi pi-pencil" style="cursor: pointer;" (click)="editPurchase(purchase)"></i>
-            <i class="pi pi-trash" style="cursor: pointer;" (click)="deletePurchase(purchase)"></i>
+          <td class="actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              (click)="editPurchase(purchase)"
+              pTooltip="Editar compra"
+              tooltipPosition="top"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              (click)="deletePurchase(purchase)"
+              pTooltip="Excluir compra"
+              tooltipPosition="top"
+            />
           </td>
         </tr>
       </ng-template>
