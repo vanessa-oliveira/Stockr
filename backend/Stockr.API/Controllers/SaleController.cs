@@ -50,14 +50,6 @@ public class SaleController : ControllerBase
         return Ok(sales);
     }
 
-    [HttpGet("period")]
-    public async Task<IActionResult> GetByPeriod([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
-    {
-        var query = new GetSalesByPeriodQuery { StartDate = startDate, EndDate = endDate };
-        var sales = await _mediator.Send(query);
-        return Ok(sales);
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetSalesPaged([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {

@@ -3,7 +3,6 @@ using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Sales;
 using Stockr.Domain.Common;
-using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Queries;

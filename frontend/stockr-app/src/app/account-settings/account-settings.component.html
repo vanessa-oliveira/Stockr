@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="profile-avatar-container">
+    <p-panel header="Foto de Perfil">
+      <p-image src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="Image" width="250" />
+    </p-panel>
+  </div>
+  <div class="user-profile-info">
+    <div class="panel" [ngClass]="{ 'expanded': this.expanded, 'collapsed': !this.expanded }">
+      <div class="header">
+        <span class="title">Informações Pessoais</span>
+        @if(this.expanded){
+          <i class="pi pi-minus" (click)="this.expanded = false"></i>
+        }
+        @else {
+          <i class="pi pi-plus" (click)="this.expanded = true"></i>
+        }
+      </div>
+      <div class="content" [ngClass]="{ 'content-hidden': !this.expanded }">
+        <div class="personal-info-form" [formGroup]="personalInfoForm">
+          <div class="form-field">
+            <label for="name">Nome</label>
+            <input pInputText id="name" formControlName="name" autocomplete="off" />
+          </div>
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input pInputText id="name" formControlName="email" autocomplete="off" />
+          </div>
+          <div class="submit-button">
+            <p-button label="Salvar" (click)="updatePersonalInfo()" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" [ngClass]="{ 'expanded': this.expandedPasswordPanel, 'collapsed': !this.expandedPasswordPanel }">
+      <div class="header">
+        <span class="title">Alterar Senha</span>
+        @if(this.expandedPasswordPanel){
+          <i class="pi pi-minus" (click)="this.expandedPasswordPanel = false"></i>
+        }
+        @else {
+          <i class="pi pi-plus" (click)="this.expandedPasswordPanel = true"></i>
+        }
+      </div>
+      <div class="content" [ngClass]="{ 'content-hidden': !this.expandedPasswordPanel }">
+        <div class="personal-info-form" [formGroup]="passwordChangeForm">
+          <div class="form-field">
+            <label for="currentPassword">Senha Atual</label>
+            <div class="password-input-wrapper">
+              <input
+                pInputText
+                id="currentPassword"
+                formControlName="currentPassword"
+                autocomplete="off"
+                [type]="showCurrentPassword ? 'text' : 'password'" />
+              <i
+                [class]="showCurrentPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                (click)="toggleCurrentPassword()"></i>
+            </div>
+            @if(this.currentPassword?.touched && this.currentPassword?.invalid){
+              <small class="error-message">Senha atual é obrigatória</small>
+            }
+          </div>
+          <div class="form-field">
+            <label for="newPassword">Nova Senha</label>
+            <div class="password-input-wrapper">
+              <input
+                pInputText
+                id="newPassword"
+                formControlName="newPassword"
+                autocomplete="off"
+                [type]="showNewPassword ? 'text' : 'password'" />
+              <i
+                [class]="showNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                (click)="toggleNewPassword()"></i>
+            </div>
+            @if(this.newPassword?.touched && this.newPassword?.invalid){
+              <small class="error-message">Nova senha é obrigatória</small>
+            }
+          </div>
+          <div class="form-field">
+            <label for="confirmNewPassword">Confirmar Nova Senha</label>
+            <div class="password-input-wrapper">
+              <input
+                pInputText
+                id="confirmNewPassword"
+                formControlName="confirmNewPassword"
+                autocomplete="off"
+                [type]="showConfirmNewPassword ? 'text' : 'password'" />
+              <i
+                [class]="showConfirmNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
+                (click)="toggleConfirmNewPassword()"></i>
+            </div>
+          </div>
+          @if(this.confirmNewPassword?.touched && this.confirmNewPassword?.invalid){
+            <small class="error-message">Senha de confirmação é obrigatória</small>
+          }
+          @if(this.passwordChangeForm.errors?.['passwordMismatch'] && this.confirmNewPassword?.touched){
+            <small class="error-message">As senhas não coincidem</small>
+          }
+          <div class="submit-button">
+            <p-button label="Salvar" (click)="changePassword()" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserService, UserListItem } from '../../services/user.service';
+import { UserService } from '../../services/user.service';
 import { UserRole } from '../../models/auth.model';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
@@ -9,6 +9,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { PagedResult } from '../../models/pagination.model';
+import {User} from '../../models/user.model';
 
 @Component({
   selector: 'app-user-list',
@@ -19,7 +20,7 @@ import { PagedResult } from '../../models/pagination.model';
   styleUrl: './user-list.component.scss'
 })
 export class UserListComponent implements OnInit {
-  users: UserListItem[] = [];
+  users: User[] = [];
   loading = false;
   errorMessage = '';
   successMessage = '';
@@ -48,7 +49,7 @@ export class UserListComponent implements OnInit {
     this.errorMessage = '';
 
     this.userService.getUsersPaged(this.pageNumber, this.pageSize).subscribe({
-      next: (result: PagedResult<UserListItem>) => {
+      next: (result: PagedResult<User>) => {
         this.users = result.items;
         this.totalCount = result.totalCount;
         this.loading = false;
@@ -76,7 +77,7 @@ export class UserListComponent implements OnInit {
     this.showCreateForm = true;
   }
 
-  onBlockUser(user: UserListItem): void {
+  onBlockUser(user: User): void {
     this.confirmationService.confirm({
       message: `Tem certeza que deseja bloquear o usuário ${user.name}?`,
       header: 'Confirmar Bloqueio',
@@ -103,7 +104,7 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onUnblockUser(user: UserListItem): void {
+  onUnblockUser(user: User): void {
     this.userService.unblockUser(user.id).subscribe({
       next: () => {
         this.successMessage = 'Usuário desbloqueado com sucesso!';
@@ -118,7 +119,7 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  onDeleteUser(user: UserListItem): void {
+  onDeleteUser(user: User): void {
     if (!confirm(`Deseja realmente excluir o usuário ${user.name}? Esta ação não pode ser desfeita.`)) {
       return;
     }

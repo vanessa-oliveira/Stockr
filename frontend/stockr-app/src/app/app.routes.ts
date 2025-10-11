@@ -1,35 +1,63 @@
 import { Routes } from '@angular/router';
-import {CategoryListComponent} from './categories/category-list/category-list.component';
-import {MainLayoutComponent} from './main-layout/main-layout.component';
-import {ProductListComponent} from './products/product-list/product-list.component';
-import {SupplierListComponent} from './suppliers/supplier-list/supplier-list.component';
-import {CustomerListComponent} from './customers/customer-list/customer-list.component';
-import {SaleListComponent} from './sales/sale-list/sale-list.component';
-import {InventoryListComponent} from './inventory/inventory-list/inventory-list.component';
-import {PurchaseListComponent} from './purchases/purchase-list/purchase-list.component';
-import {LoginComponent} from './auth/login/login.component';
-import {SignupComponent} from './auth/signup/signup.component';
-import {authGuard} from './guards/auth.guard';
-import {tenantAdminGuard} from './guards/tenant-admin.guard';
-import {UserListComponent} from './users/user-list/user-list.component';
+import { authGuard } from './guards/auth.guard';
+import { tenantAdminGuard } from './guards/tenant-admin.guard';
 
 export const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  {
+    path: 'login',
+    loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent)
+  },
+  {
+    path: 'signup',
+    loadComponent: () => import('./auth/signup/signup.component').then(m => m.SignupComponent)
+  },
   {
     path: '',
-    component: MainLayoutComponent,
+    loadComponent: () => import('./main-layout/main-layout.component').then(m => m.MainLayoutComponent),
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'products', pathMatch: 'full' },
-      { path: 'categories', component: CategoryListComponent },
-      { path: 'products', component: ProductListComponent },
-      { path: 'suppliers', component: SupplierListComponent },
-      { path: 'customers', component: CustomerListComponent },
-      { path: 'inventory', component: InventoryListComponent },
-      { path: 'purchases', component: PurchaseListComponent },
-      { path: 'sales', component: SaleListComponent },
-      { path: 'users', component: UserListComponent, canActivate: [tenantAdminGuard] },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
+      {
+        path: 'categories',
+        loadComponent: () => import('./categories/category-list/category-list.component').then(m => m.CategoryListComponent)
+      },
+      {
+        path: 'products',
+        loadComponent: () => import('./products/product-list/product-list.component').then(m => m.ProductListComponent)
+      },
+      {
+        path: 'suppliers',
+        loadComponent: () => import('./suppliers/supplier-list/supplier-list.component').then(m => m.SupplierListComponent)
+      },
+      {
+        path: 'customers',
+        loadComponent: () => import('./customers/customer-list/customer-list.component').then(m => m.CustomerListComponent)
+      },
+      {
+        path: 'inventory',
+        loadComponent: () => import('./inventory/inventory-list/inventory-list.component').then(m => m.InventoryListComponent)
+      },
+      {
+        path: 'purchases',
+        loadComponent: () => import('./purchases/purchase-list/purchase-list.component').then(m => m.PurchaseListComponent)
+      },
+      {
+        path: 'sales',
+        loadComponent: () => import('./sales/sale-list/sale-list.component').then(m => m.SaleListComponent)
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./users/user-list/user-list.component').then(m => m.UserListComponent),
+        canActivate: [tenantAdminGuard]
+      },
+      {
+        path: 'account-settings/:id',
+        loadComponent: () => import('./account-settings/account-settings.component').then(m => m.AccountSettingsComponent)
+      },
     ]
   },
 ];

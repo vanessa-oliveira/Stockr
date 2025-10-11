@@ -253,7 +253,7 @@ public class PurchaseInventoryServiceTests
     }
 
     [Fact]
-    public async Task nao_deve_processar_produto_sem_inventario_configurado()
+    public async Task nao_deve_processar_produto_sem_estoque_configurado()
     {
         //Arrange
         var purchaseId = _fixture.Create<Guid>();

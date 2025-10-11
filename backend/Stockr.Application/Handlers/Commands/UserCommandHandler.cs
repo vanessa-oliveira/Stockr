@@ -13,7 +13,8 @@ public class UserCommandHandler :
     IRequestHandler<DeleteUserCommand, Unit>,
     IRequestHandler<BlockUserCommand, Unit>,
     IRequestHandler<UnblockUserCommand, Unit>,
-    IRequestHandler<ChangePasswordCommand, Unit>
+    IRequestHandler<ChangePasswordCommand, Unit>,
+    IRequestHandler<UpdatePersonalInfoCommand, Unit>
 {
     private readonly IUserRepository _userRepository;
     private readonly IPasswordService _passwordService;
@@ -175,6 +176,11 @@ public class UserCommandHandler :
         {
             throw new UnauthorizedAccessException("Cannot change password for users from other tenants");
         }
+
+        if (!await _passwordService.VerifyPassword(command.CurrentPassword, user.Password))
+        {
+            throw new InvalidOperationException("Password informed does not match current password");
+        }
         
         if (!_passwordService.IsValidPassword(command.NewPassword))
         {
@@ -187,6 +193,28 @@ public class UserCommandHandler :
         user.UpdatedAt = DateTime.UtcNow;
 
         await _userRepository.UpdateAsync(user);
+        return Unit.Value;
+    }
+
+    public async Task<Unit> Handle(UpdatePersonalInfoCommand command, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetByIdAsync(command.UserId);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        //Só iremos atualizar se alguma das informações tiverem sido realmente alteradas
+        if ((!string.IsNullOrEmpty(command.Name) &&
+             !command.Name.Equals(user.Name, StringComparison.InvariantCultureIgnoreCase)) ||
+            (!string.IsNullOrEmpty(command.Email) &&
+             !command.Email.Equals(user.Email, StringComparison.InvariantCultureIgnoreCase)))
+        {
+            user.Name = command.Name!;
+            user.Email = command.Email!;
+            await _userRepository.UpdateAsync(user);
+        }
+        
         return Unit.Value;
     }
 }

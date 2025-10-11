@@ -173,6 +173,21 @@ public class UserController : ControllerBase
             return StatusCode(500, new { message = "An error occurred while changing the password", details = ex.Message });
         }
     }
+    
+    [HttpPatch("{id}/update-personal-info")]
+    public async Task<IActionResult> UpdatePersonalInfo(Guid id, [FromBody] UpdatePersonalInfoCommand command)
+    {
+        try
+        {
+            command.UserId = id;
+            await _mediator.Send(command);
+            return Ok(new { message = "Information updated successfully" });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred while changing the password", details = ex.Message });
+        }
+    }
 
     #endregion
 }

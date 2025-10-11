@@ -8,18 +8,17 @@
 
       @if(currentUser){
         <div class="nav-actions logged-in">
-          <div class="user-info">
-            <div class="user-details">
-              <span class="user-name">{{ currentUser.name }}</span>
-            </div>
-            <button
-              class="btn-logout"
-              (click)="logout()"
-              pTooltip="Sair"
-              tooltipPosition="bottom"
-            >
-              <i class="pi pi-sign-out"></i>
+          <div class="user-menu">
+            <button class="user-menu-trigger" (click)="userMenu.toggle($event)">
+              <div class="user-avatar">
+                <img src="https://primefaces.org/cdn/primeng/images/galleria/galleria10.jpg" alt="user-avatar">
+              </div>
+              <div class="user-info-text">
+                <span class="user-name">{{ currentUser?.name }}</span>
+              </div>
+              <i class="pi pi-chevron-down"></i>
             </button>
+            <p-menu #userMenu [model]="menuItems" [popup]="true"></p-menu>
           </div>
         </div>
       }
@@ -32,7 +31,7 @@
           </a>
           <a routerLink="/signup" class="btn-primary">
             <i class="pi pi-sparkles"></i>
-            <span>Começar Grátis</span>
+            <span>Cadastre-se</span>
           </a>
         </div>
       }

@@ -5,16 +5,14 @@
   right: 0;
   z-index: 1000;
   background-color: #ffffff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   height: 70px;
   transition: all 0.3s ease;
 
   .container {
-    max-width: 1400px;
     height: 100%;
     padding: 0 40px;
     display: flex;
-    margin: 0 auto;
 
     @media (max-width: 768px) {
       padding: 0 20px;
@@ -57,60 +55,69 @@
         gap: 16px;
 
         &.logged-in {
-          gap: 24px;
+          flex: 1;
+          justify-content: flex-end;
+          gap: 20px;
         }
 
-        .user-info {
+        .user-menu {
           display: flex;
           align-items: center;
-          gap: 16px;
-          padding: 8px 16px;
-          background: #f9fafb;
-          border-radius: 12px;
-          border: 1px solid #e5e7eb;
 
-          .user-details {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-
-            @media (max-width: 768px) {
-              display: none;
-            }
-
-            .user-name {
-              font-size: 0.9rem;
-              font-weight: 600;
-              color: #1f2937;
-            }
-          }
-
-          .btn-logout {
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            background: #fee2e2;
-            color: #dc2626;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
+          .user-menu-trigger {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
 
             &:hover {
-              background: #fecaca;
-              transform: scale(1.1);
+              background: #f3f4f6;
             }
 
-            &:active {
-              transform: scale(0.95);
+            .user-avatar {
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 2px solid #e5e7eb;
+                transition: border-color 0.3s ease;
+              }
             }
 
-            i {
-              font-size: 1rem;
+            .user-info-text {
+              display: flex;
+              flex-direction: column;
+              gap: 2px;
+
+              @media (max-width: 968px) {
+                display: none;
+              }
+
+              .user-name {
+                font-size: 1.2rem;
+                font-weight: 500;
+                color: #1f2937;
+                line-height: 1.2;
+              }
+            }
+
+            i.pi-chevron-down {
+              font-size: 0.7rem;
+              color: #9ca3af;
+              transition: transform 0.3s ease, color 0.3s ease;
+
+              @media (max-width: 968px) {
+                display: none;
+              }
             }
           }
         }
@@ -163,17 +170,68 @@
           &:active {
             transform: translateY(0);
           }
+        }
+      }
+    }
+  }
+}
 
-          @media (prefers-color-scheme: dark) {
-            background: #2b8ea0;
-            box-shadow: 0 4px 12px rgba(43, 142, 160, 0.3);
+// Custom PrimeNG Menu Styles
+::ng-deep {
+  .p-menu.p-menu-overlay {
+    z-index: 1100 !important;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e5e7eb;
+    padding: 8px;
+    min-width: 220px;
+    margin-top: 8px;
+    background: #ffffff;
 
-            &:hover {
-              box-shadow: 0 6px 20px rgba(43, 142, 160, 0.4);
-            }
+    .p-menu-list {
+      padding: 0;
+    }
+
+    .p-menuitem {
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .p-menuitem-link {
+        border-radius: 8px;
+        padding: 12px 14px;
+        transition: all 0.2s ease;
+
+        &:not(.p-disabled):hover {
+          background: #f3f4f6 !important;
+        }
+
+        .p-menuitem-icon {
+          color: #6b7280;
+          font-size: 1rem;
+          margin-right: 10px;
+        }
+
+        .p-menuitem-text {
+          color: #374151;
+          font-weight: 500;
+          font-size: 0.9rem;
+        }
+
+        &:not(.p-disabled):hover {
+          .p-menuitem-icon,
+          .p-menuitem-text {
+            color: #1393b2;
           }
         }
       }
+    }
+
+    .p-menuitem-separator {
+      margin: 8px 0;
+      border-top: 1px solid #e5e7eb;
     }
   }
 }
