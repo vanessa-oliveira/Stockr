@@ -2,7 +2,10 @@ using MediatR;
 using Stockr.Application.Commands.Products;
 using Stockr.Application.Services;
 using Stockr.Domain.Entities;
+using Stockr.Infrastructure.Helpers;
+using Stockr.Infrastructure.Interfaces;
 using Stockr.Infrastructure.Repositories;
+using Stockr.Infrastructure.Services;
 
 namespace Stockr.Application.Handlers.Commands;
 
@@ -15,13 +18,23 @@ public class ProductCommandHandler :
     private readonly ITenantService _tenantService;
     private readonly ICategoryRepository _categoryRepository;
     private readonly ISupplierRepository _supplierRepository;
+    private readonly ICacheService _cacheService;
+    private readonly ITenantContext _tenantContext;
 
-    public ProductCommandHandler(IProductRepository productRepository, ITenantService tenantService, ICategoryRepository categoryRepository, ISupplierRepository supplierRepository)
+    public ProductCommandHandler(
+        IProductRepository productRepository,
+        ITenantService tenantService,
+        ICategoryRepository categoryRepository,
+        ISupplierRepository supplierRepository,
+        ICacheService cacheService,
+        ITenantContext tenantContext)
     {
         _productRepository = productRepository;
         _tenantService = tenantService;
         _categoryRepository = categoryRepository;
         _supplierRepository = supplierRepository;
+        _cacheService = cacheService;
+        _tenantContext = tenantContext;
     }
 
     public async Task<Unit> Handle(CreateProductCommand command, CancellationToken cancellationToken)
@@ -45,6 +58,9 @@ public class ProductCommandHandler :
         };
 
         await _productRepository.AddAsync(product);
+        
+        await RemoveProductsFromCache(currentTenantId.Value, product.Id);
+
         return Unit.Value;
     }
 
@@ -68,7 +84,7 @@ public class ProductCommandHandler :
                 throw new ArgumentException("Category not found");
             }
         }
-        
+
         if (product.Supplier != null && product.Supplier?.Id != command.SupplierId)
         {
             var supplier = await _supplierRepository.GetByIdAsync(command.CategoryId);
@@ -89,6 +105,13 @@ public class ProductCommandHandler :
         product.SalePrice = command.SalePrice;
         
         await _productRepository.UpdateAsync(product);
+        
+        var tenantId = _tenantContext.GetCurrentTenantId();
+        if (tenantId.HasValue)
+        {
+            await RemoveProductsFromCache(tenantId.Value, command.Id);
+        }
+
         return Unit.Value;
     }
 
@@ -99,8 +122,26 @@ public class ProductCommandHandler :
         {
             throw new ArgumentException("Product not found");
         }
-        
+
         await _productRepository.DeleteAsync(product);
+
+        var tenantId = _tenantContext.GetCurrentTenantId();
+        if (tenantId.HasValue)
+        {
+            await RemoveProductsFromCache(tenantId.Value, command.Id);
+        }
+
         return Unit.Value;
+    }
+    
+    private async Task RemoveProductsFromCache(Guid tenantId, Guid? productId = null)
+    {
+        await _cacheService.RemoveByPatternAsync(CacheKeyHelper.ProductsPattern(tenantId));
+        
+        if (productId.HasValue)
+        {
+            var productCacheKey = CacheKeyHelper.ProductById(tenantId, productId.Value);
+            await _cacheService.RemoveAsync(productCacheKey);
+        }
     }
 }

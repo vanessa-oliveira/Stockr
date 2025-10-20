@@ -1,10 +1,8 @@
-using Azure;
 using Mapster;
 using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Suppliers;
 using Stockr.Domain.Common;
-using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Queries;

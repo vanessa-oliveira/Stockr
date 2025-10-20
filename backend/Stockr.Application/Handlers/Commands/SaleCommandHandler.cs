@@ -114,8 +114,7 @@ public class SaleCommandHandler :
         {
             throw new ArgumentException("Sale not found");
         }
-
-        // Validar se a venda pode ser alterada
+        
         if (existingSale.SaleStatus == SaleStatus.Confirmed || existingSale.SaleStatus == SaleStatus.Cancelled)
         {
             throw new InvalidOperationException("Cannot update completed or cancelled sales");

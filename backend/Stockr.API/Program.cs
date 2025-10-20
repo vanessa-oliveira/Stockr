@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using StackExchange.Redis;
 using System.Text;
+using Serilog;
 using Stockr.API.Configuration;
 using Stockr.API.Middleware;
 using Stockr.Application.Commands.Categories;
@@ -12,8 +14,16 @@ using Stockr.Application.Services;
 using Stockr.Infrastructure.Context;
 using Stockr.Infrastructure.Interfaces;
 using Stockr.Infrastructure.Repositories;
+using Stockr.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 builder.Services.AddControllers()
@@ -56,6 +66,35 @@ builder.Services.AddMediatR(config =>
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+ConnectionMultiplexer? redisConnection = null;
+try
+{
+    var configuration = ConfigurationOptions.Parse(builder.Configuration["Redis:ConnectionString"] ?? "localhost:6379");
+    configuration.AbortOnConnectFail = false;
+    configuration.ConnectTimeout = 3000;
+    redisConnection = ConnectionMultiplexer.Connect(configuration);
+
+    if (redisConnection.IsConnected)
+    {
+        Log.Information("Conectado ao Redis com sucesso");
+        builder.Services.AddSingleton(redisConnection);
+    }
+    else
+    {
+        Log.Warning("Não foi possível conectar ao Redis. Cache desabilitado - consultas serão feitas diretamente no banco");
+        redisConnection.Dispose();
+        redisConnection = null;
+    }
+}
+catch (Exception ex)
+{
+    Log.Warning(ex, "Erro ao conectar ao Redis. Cache desabilitado - consultas serão feitas diretamente no banco");
+    redisConnection?.Dispose();
+    redisConnection = null;
+}
+
+builder.Services.AddSingleton(Log.Logger);
+
 // Repositories
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -80,6 +119,15 @@ builder.Services.AddScoped<ISaleInventoryService, SaleInventoryService>();
 builder.Services.AddScoped<ISaleItemService, SaleItemService>();
 builder.Services.AddScoped<ITenantService, TenantService>();
 builder.Services.AddScoped<ITenantContext>(sp => sp.GetRequiredService<ITenantService>());
+
+if (redisConnection != null)
+{
+    builder.Services.AddSingleton<ICacheService, RedisCacheService>();
+}
+else
+{
+    builder.Services.AddSingleton<ICacheService, NoCacheService>();
+}
 
 builder.Services.AddHttpContextAccessor();
 
