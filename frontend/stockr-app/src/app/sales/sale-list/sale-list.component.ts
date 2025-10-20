@@ -44,7 +44,7 @@ export class SaleListComponent {
   }
 
   loadSales() {
-    this.saleService.getSalesPaged(this.pageNumber, this.pageSize).subscribe({
+    this.saleService.getAllSales(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Sale>) => {
         this.sales = result.items;
         this.totalCount = result.totalCount;

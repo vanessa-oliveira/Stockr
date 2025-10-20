@@ -42,7 +42,7 @@ export class SupplierListComponent {
   }
 
   loadSuppliers() {
-    this.supplierService.getSuppliersPaged(this.pageNumber, this.pageSize).subscribe({
+    this.supplierService.getAllSuppliers(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Supplier>) => {
         this.suppliers = result.items;
         this.totalCount = result.totalCount;

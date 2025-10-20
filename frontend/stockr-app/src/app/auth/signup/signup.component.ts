@@ -29,7 +29,6 @@ export class SignupComponent {
   ) {
     this.signupForm = this.fb.group({
       tenantName: ['', [Validators.required, Validators.minLength(3)]],
-      tenantDomain: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z0-9-]+$/)]],
       planType: [PlanType.Basic, [Validators.required]],
       adminName: ['', [Validators.required, Validators.minLength(3)]],
       adminEmail: ['', [Validators.required, Validators.email]],
@@ -61,8 +60,7 @@ export class SignupComponent {
 
     const request: TenantSignupRequest = {
       tenantName: this.signupForm.value.tenantName,
-      tenantDomain: this.signupForm.value.tenantDomain.toLowerCase().trim(),
-      planType: this.signupForm.value.planType,
+      planType: Number(this.signupForm.value.planType),
       adminName: this.signupForm.value.adminName,
       adminEmail: this.signupForm.value.adminEmail.toLowerCase().trim(),
       password: this.signupForm.value.password
@@ -84,10 +82,6 @@ export class SignupComponent {
 
   get tenantName() {
     return this.signupForm.get('tenantName');
-  }
-
-  get tenantDomain() {
-    return this.signupForm.get('tenantDomain');
   }
 
   get planType() {

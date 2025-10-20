@@ -17,7 +17,6 @@ namespace Stockr.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Domain = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PlanType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Active = table.Column<bool>(type: "bit", nullable: false),
                     Deleted = table.Column<bool>(type: "bit", nullable: false),
@@ -142,7 +141,7 @@ namespace Stockr.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    SKU = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SKU = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     CategoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -482,7 +481,8 @@ namespace Stockr.Infrastructure.Migrations
                 name: "IX_Products_SKU",
                 table: "Products",
                 column: "SKU",
-                unique: true);
+                unique: true,
+                filter: "[SKU] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_SupplierId",
@@ -553,12 +553,6 @@ namespace Stockr.Infrastructure.Migrations
                 name: "IX_Suppliers_TenantId",
                 table: "Suppliers",
                 column: "TenantId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tenants_Domain",
-                table: "Tenants",
-                column: "Domain",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",

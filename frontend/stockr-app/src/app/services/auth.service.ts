@@ -23,7 +23,6 @@ export class AuthService {
     );
     this.currentUser = this.currentUserSubject.asObservable();
 
-    // Check token expiration on service initialization
     this.checkTokenExpiration();
   }
 

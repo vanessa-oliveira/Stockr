@@ -6,8 +6,6 @@ export interface Product {
   name: string;
   sku: string;
   description: string;
-  categoryId: string;
-  supplierId?: string;
   costPrice: number;
   salePrice: number;
   category?: Category;

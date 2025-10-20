@@ -5,7 +5,6 @@ export interface LoginRequest {
 
 export interface TenantSignupRequest {
   tenantName: string;
-  tenantDomain: string;
   planType: PlanType;
   adminName: string;
   adminEmail: string;
@@ -32,7 +31,6 @@ export interface User {
 export interface Tenant {
   id: string;
   name: string;
-  domain: string;
   planType: PlanType;
 }
 
@@ -48,7 +46,7 @@ export enum UserRole {
 }
 
 export enum PlanType {
-  Basic = 0,
-  Standard = 1,
-  Enterprise = 2
+  Basic,
+  Standard,
+  Enterprise
 }

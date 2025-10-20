@@ -42,7 +42,7 @@ export class ProductListComponent {
   }
 
   loadProducts() {
-    this.productService.getProductsPaged(this.pageNumber, this.pageSize).subscribe({
+    this.productService.getAllProducts(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Product>) => {
         this.products = result.items;
         this.totalCount = result.totalCount;

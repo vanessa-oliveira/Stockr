@@ -30,11 +30,7 @@ export class CustomerService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllCustomers(): Observable<Array<Customer>> {
-    return this.http.get<Array<Customer>>(this.apiUrl + "/customer");
-  }
-
-  public getCustomersPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Customer>> {
+  public getAllCustomers(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Customer>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

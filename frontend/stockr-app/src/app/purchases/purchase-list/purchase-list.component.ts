@@ -42,7 +42,7 @@ export class PurchaseListComponent {
   }
 
   loadPurchases() {
-    this.purchaseService.getPurchasesPaged(this.pageNumber, this.pageSize).subscribe({
+    this.purchaseService.getAllPurchases(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Purchase>) => {
         this.purchases = result.items;
         this.totalCount = result.totalCount;

@@ -40,11 +40,7 @@ export class SaleService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllSales(): Observable<Array<Sale>> {
-    return this.http.get<Array<Sale>>(this.apiUrl + "/sale");
-  }
-
-  public getSalesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Sale>> {
+  public getAllSales(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Sale>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

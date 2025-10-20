@@ -48,7 +48,7 @@ export class UserListComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    this.userService.getUsersPaged(this.pageNumber, this.pageSize).subscribe({
+    this.userService.getAllUsers(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<User>) => {
         this.users = result.items;
         this.totalCount = result.totalCount;

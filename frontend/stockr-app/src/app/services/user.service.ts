@@ -13,11 +13,7 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
-  }
-
-  getUsersPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<User>> {
+  getAllUsers(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<User>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

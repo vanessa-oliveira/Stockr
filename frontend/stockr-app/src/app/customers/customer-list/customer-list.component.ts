@@ -42,7 +42,7 @@ export class CustomerListComponent {
   }
 
   loadCustomers() {
-    this.customerService.getCustomersPaged(this.pageNumber, this.pageSize).subscribe({
+    this.customerService.getAllCustomers(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Customer>) => {
         this.customers = result.items;
         this.totalCount = result.totalCount;

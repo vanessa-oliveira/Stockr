@@ -27,7 +27,7 @@ public class TenantService : ITenantService
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext?.Items.ContainsKey("TenantId") == true)
         {
-            return (Guid?)httpContext.Items["TenantId"];
+            return (Guid)httpContext.Items["TenantId"];
         }
         
         var tenantIdClaim = httpContext?.User?.FindFirst("TenantId");

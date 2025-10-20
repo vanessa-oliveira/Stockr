@@ -32,32 +32,6 @@
         </div>
 
         <div class="form-group">
-          <label for="tenantDomain">Domínio Único</label>
-          <input
-            type="text"
-            id="tenantDomain"
-            formControlName="tenantDomain"
-            class="form-control"
-            [class.is-invalid]="tenantDomain?.invalid && tenantDomain?.touched"
-            placeholder="minha-loja"
-          >
-          <small class="form-hint">Somente letras minúsculas, números e hífen</small>
-          @if(tenantDomain?.invalid && tenantDomain?.touched){
-            <div class="error-message">
-              @if(tenantDomain?.errors?.['required']){
-                <small>Domínio é obrigatório</small>
-              }
-              @if(tenantDomain?.errors?.['minlength']){
-                <small>Domínio deve ter no mínimo 3 caracteres</small>
-              }
-              @if(tenantDomain?.errors?.['pattern']){
-                <small>Use apenas letras minúsculas, números e hífen</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="form-group">
           <label for="planType">Plano</label>
           <select
             id="planType"
@@ -65,7 +39,7 @@
             class="form-control"
           >
             @for(plan of planTypes; track plan.value){
-              <option [value]="plan.value">{{ plan.label }} - {{ plan.description }}</option>
+              <option [ngValue]="plan.value">{{ plan.label }} - {{ plan.description }}</option>
             }
           </select>
         </div>

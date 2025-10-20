@@ -88,15 +88,15 @@ export class SaleFormComponent implements OnInit, OnChanges {
   }
 
   loadCustomers() {
-    this.customerService.getAllCustomers().subscribe({
-      next: (customers) => this.customers = customers,
+    this.customerService.getAllCustomers(1, 20).subscribe({
+      next: (result) => this.customers = result.items,
       error: (error) => console.error('Erro ao carregar clientes:', error)
     });
   }
 
   loadProducts() {
-    this.productService.getAllProducts().subscribe({
-      next: (products) => this.products = products,
+    this.productService.getAllProducts(1, 20).subscribe({
+      next: (result) => this.products = result.items,
       error: (error) => console.error('Erro ao carregar produtos:', error)
     });
   }

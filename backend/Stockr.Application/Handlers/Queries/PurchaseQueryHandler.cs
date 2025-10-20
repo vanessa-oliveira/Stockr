@@ -3,6 +3,7 @@ using MediatR;
 using Stockr.Application.Models;
 using Stockr.Application.Queries.Purchase;
 using Stockr.Domain.Common;
+using Stockr.Domain.Entities;
 using Stockr.Infrastructure.Repositories;
 
 namespace Stockr.Application.Handlers.Queries;
@@ -57,7 +58,7 @@ public class PurchaseQueryHandler :
         return purchases.Adapt<PagedResult<PurchaseViewModel>>();
     }
 
-    private static PurchaseViewModel MapToViewModel(Domain.Entities.Purchase purchase)
+    private static PurchaseViewModel MapToViewModel(Purchase purchase)
     {
         return new PurchaseViewModel
         {

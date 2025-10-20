@@ -36,11 +36,7 @@ export class PurchaseService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllPurchases(): Observable<Array<Purchase>> {
-    return this.http.get<Array<Purchase>>(this.apiUrl + "/purchase");
-  }
-
-  public getPurchasesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Purchase>> {
+  public getAllPurchases(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Purchase>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

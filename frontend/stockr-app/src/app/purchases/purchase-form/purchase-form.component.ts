@@ -82,15 +82,15 @@ export class PurchaseFormComponent implements OnInit, OnChanges {
   }
 
   loadSuppliers() {
-    this.supplierService.getAllSuppliers().subscribe({
-      next: (suppliers) => this.suppliers = suppliers,
+    this.supplierService.getAllSuppliers(1, 20).subscribe({
+      next: (result) => this.suppliers = result.items,
       error: (error) => console.error('Erro ao carregar fornecedores:', error)
     });
   }
 
   loadProducts() {
-    this.productService.getAllProducts().subscribe({
-      next: (products) => this.products = products,
+    this.productService.getAllProducts(1, 20).subscribe({
+      next: (result) => this.products = result.items,
       error: (error) => console.error('Erro ao carregar produtos:', error)
     });
   }

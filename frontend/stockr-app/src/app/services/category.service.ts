@@ -15,11 +15,7 @@ export class CategoryService {
   constructor(private http: HttpClient) {
   }
 
-  public getAllCategories(): Observable<Array<Category>> {
-    return this.http.get<Array<Category>>(this.apiUrl + "/category");
-  }
-
-  public getCategoriesPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Category>> {
+  public getAllCategories(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Category>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

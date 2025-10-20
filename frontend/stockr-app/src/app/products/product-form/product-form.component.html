@@ -15,7 +15,7 @@
       </div>
 
       <div class="form-field">
-        <label for="sku">SKU *</label>
+        <label for="sku">SKU</label>
         <input pInputText id="sku" formControlName="sku" autocomplete="off" />
       </div>
     </div>
@@ -28,11 +28,11 @@
     <div class="form-row">
       <div class="form-field">
         <label for="categoryId">Categoria *</label>
-        @if(categories.length > 0) {
+        @if(availableCategories.length > 0) {
           <p-select
             id="categoryId"
             formControlName="categoryId"
-            [options]="categories"
+            [options]="availableCategories"
             optionLabel="name"
             optionValue="id"
             placeholder="Selecione uma categoria">
@@ -49,11 +49,11 @@
 
       <div class="form-field">
         <label for="supplierId">Fornecedor</label>
-        @if(suppliers.length > 0) {
+        @if(availableSuppliers.length > 0) {
           <p-select
             id="supplierId"
             formControlName="supplierId"
-            [options]="suppliers"
+            [options]="availableSuppliers"
             optionLabel="name"
             optionValue="id"
             placeholder="Selecione um fornecedor">

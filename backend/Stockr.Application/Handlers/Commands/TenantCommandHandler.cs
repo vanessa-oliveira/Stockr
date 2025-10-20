@@ -36,11 +36,6 @@ public class TenantCommandHandler :
                 "A senha deve ter no mínimo 8 caracteres, incluindo maiúsculas, minúsculas, números e caracteres especiais.");
         }
         
-        if (await _tenantRepository.DomainExistsAsync(command.TenantDomain))
-        {
-            return AuthenticationResult.Failure("Este domínio já está em uso. Escolha outro domínio.");
-        }
-        
         var existingUser = await _userRepository.GetByEmailAsync(command.AdminEmail);
         if (existingUser != null)
         {
@@ -50,7 +45,6 @@ public class TenantCommandHandler :
         var tenant = new Tenant
         {
             Name = command.TenantName,
-            Domain = command.TenantDomain.ToLowerInvariant().Trim(),
             PlanType = command.PlanType,
             Active = true,
             CreatedAt = DateTime.UtcNow

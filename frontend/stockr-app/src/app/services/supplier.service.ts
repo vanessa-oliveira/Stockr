@@ -13,11 +13,7 @@ export class SupplierService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllSuppliers(): Observable<Array<Supplier>> {
-    return this.http.get<Array<Supplier>>(this.apiUrl + "/supplier");
-  }
-
-  public getSuppliersPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Supplier>> {
+  public getAllSuppliers(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Supplier>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

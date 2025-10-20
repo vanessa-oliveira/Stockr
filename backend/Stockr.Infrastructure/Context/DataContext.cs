@@ -58,13 +58,6 @@ public class DataContext : DbContext
                 .IsRequired()
                 .HasMaxLength(200);
 
-            entity.Property(e => e.Domain)
-                .IsRequired()
-                .HasMaxLength(100);
-
-            entity.HasIndex(e => e.Domain)
-                .IsUnique();
-
             entity.Property(e => e.PlanType)
                 .IsRequired()
                 .HasConversion<string>();

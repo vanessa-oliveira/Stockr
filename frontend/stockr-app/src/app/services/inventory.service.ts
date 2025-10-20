@@ -25,11 +25,7 @@ export class InventoryService {
 
   constructor(private http: HttpClient) { }
 
-  getAllInventory(): Observable<Inventory[]> {
-    return this.http.get<Inventory[]>(this.apiUrl);
-  }
-
-  getInventoryPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Inventory>> {
+  getAllInventory(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Inventory>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

@@ -12,7 +12,7 @@ using Stockr.Infrastructure.Context;
 namespace Stockr.Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250930004855_InitialMigration")]
+    [Migration("20251126154604_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Stockr.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -260,7 +260,6 @@ namespace Stockr.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)");
 
                     b.Property<string>("SKU")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -282,7 +281,8 @@ namespace Stockr.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SKU")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[SKU] IS NOT NULL");
 
                     b.HasIndex("SupplierId");
 
@@ -540,11 +540,6 @@ namespace Stockr.Infrastructure.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Domain")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -558,9 +553,6 @@ namespace Stockr.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Domain")
-                        .IsUnique();
 
                     b.ToTable("Tenants");
                 });

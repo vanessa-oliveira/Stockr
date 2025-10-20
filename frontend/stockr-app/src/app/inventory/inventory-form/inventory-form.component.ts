@@ -63,28 +63,32 @@ export class InventoryFormComponent implements OnChanges {
       this.loadInventory();
     }
 
-    if (changes['inventory'] && this.inventory) {
-      this.inventoryForm.patchValue({
-        productId: this.inventory.productId,
-        minStock: this.inventory.minStock,
-        currentStock: this.inventory.currentStock
-      });
-      this.inventoryForm.get('productId')?.disable();
-      this.inventoryForm.get('currentStock')?.disable();
-    } else if (changes['inventory'] && !this.inventory) {
-      this.inventoryForm.reset({
-        minStock: 0,
-        currentStock: 0
-      });
-      this.inventoryForm.get('productId')?.enable();
-      this.inventoryForm.get('currentStock')?.enable();
+    if (changes['inventory']) {
+      if (this.inventory) {
+        this.filterAvailableProducts();
+
+        this.inventoryForm.patchValue({
+          productId: this.inventory.productId,
+          minStock: this.inventory.minStock,
+          currentStock: this.inventory.currentStock
+        });
+        this.inventoryForm.get('currentStock')?.disable();
+      } else {
+        this.inventoryForm.reset({
+          minStock: 0,
+          currentStock: 0
+        });
+        this.inventoryForm.get('currentStock')?.enable();
+
+        this.filterAvailableProducts();
+      }
     }
   }
 
   loadProducts() {
-    this.productService.getAllProducts().subscribe({
-      next: (products) => {
-        this.products = products;
+    this.productService.getAllProducts(1, 20).subscribe({
+      next: (result) => {
+        this.products = result.items;
         this.filterAvailableProducts();
       },
       error: (error) => console.error('Erro ao carregar produtos:', error)
@@ -92,9 +96,9 @@ export class InventoryFormComponent implements OnChanges {
   }
 
   loadInventory() {
-    this.inventoryService.getAllInventory().subscribe({
-      next: (inventory) => {
-        this.allInventory = inventory;
+    this.inventoryService.getAllInventory(1, 20).subscribe({
+      next: (result) => {
+        this.allInventory = Array.isArray(result.items) ? result.items : [];
         this.filterAvailableProducts();
       },
       error: (error) => console.error('Erro ao carregar estoque:', error)
@@ -102,7 +106,16 @@ export class InventoryFormComponent implements OnChanges {
   }
 
   filterAvailableProducts() {
-    if (this.products.length === 0 || this.allInventory.length === 0) {
+    if (!Array.isArray(this.allInventory)) {
+      this.allInventory = [];
+    }
+
+    if (this.products.length === 0) {
+      this.availableProducts = [];
+      return;
+    }
+
+    if (this.allInventory.length === 0) {
       this.availableProducts = this.products;
       return;
     }
@@ -112,6 +125,13 @@ export class InventoryFormComponent implements OnChanges {
     this.availableProducts = this.products.filter(
       product => !productsWithInventory.includes(product.id!)
     );
+
+    if (this.inventory && this.inventory.productId) {
+      const currentProduct = this.products.find(p => p.id === this.inventory!.productId);
+      if (currentProduct && !this.availableProducts.find(p => p.id === currentProduct.id)) {
+        this.availableProducts = [currentProduct, ...this.availableProducts];
+      }
+    }
   }
 
   closeDialog() {

@@ -40,7 +40,7 @@ export class CategoryListComponent {
     }
 
     loadCategories() {
-      this.categoryService.getCategoriesPaged(this.pageNumber, this.pageSize).subscribe({
+      this.categoryService.getAllCategories(this.pageNumber, this.pageSize).subscribe({
         next: (result: PagedResult<Category>) => {
           this.categories = result.items;
           this.totalCount = result.totalCount;

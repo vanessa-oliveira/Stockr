@@ -42,7 +42,7 @@ export class InventoryListComponent {
   }
 
   loadInventory() {
-    this.inventoryService.getInventoryPaged(this.pageNumber, this.pageSize).subscribe({
+    this.inventoryService.getAllInventory(this.pageNumber, this.pageSize).subscribe({
       next: (result: PagedResult<Inventory>) => {
         this.inventory = result.items;
         this.totalCount = result.totalCount;

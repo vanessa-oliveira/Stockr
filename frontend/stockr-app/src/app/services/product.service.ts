@@ -13,11 +13,7 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  public getAllProducts(): Observable<Array<Product>> {
-    return this.http.get<Array<Product>>(this.apiUrl + "/product");
-  }
-
-  public getProductsPaged(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Product>> {
+  public getAllProducts(pageNumber: number = 1, pageSize: number = 10): Observable<PagedResult<Product>> {
     const params = new HttpParams()
       .set('pageNumber', pageNumber.toString())
       .set('pageSize', pageSize.toString());

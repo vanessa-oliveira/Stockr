@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Stockr.Application.Services;
 
 namespace Stockr.API.Middleware;
 
@@ -13,7 +14,7 @@ public class TenantMiddleware
         _logger = logger;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(HttpContext context, ITenantService tenantService)
     {
         if (context.User?.Identity?.IsAuthenticated == true)
         {
@@ -22,6 +23,7 @@ public class TenantMiddleware
             if (tenantIdClaim != null && Guid.TryParse(tenantIdClaim.Value, out var tenantId))
             {
                 context.Items["TenantId"] = tenantId;
+                tenantService.SetTenantId(tenantId);
 
                 _logger.LogDebug("Tenant context set: {TenantId}", tenantId);
             }
