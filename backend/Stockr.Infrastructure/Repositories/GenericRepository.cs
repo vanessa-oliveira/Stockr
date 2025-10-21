@@ -11,6 +11,7 @@ public interface IGenericRepository<T> where T : BaseEntity
     Task<T?> GetByIdAsync(Guid id);
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> GetAllActiveAsync();
+    Task<T?> GetDeletedByIdAsync(Guid id);
     Task<PagedResult<T>> GetPagedAsync(PaginationParams paginationParams);
     Task<bool> AddAsync(T entity);
     Task<bool> AddRangeAsync(IList<T> entities);
@@ -38,7 +39,12 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.AsNoTracking().ToListAsync();
+        return await _dbSet.AsNoTracking().Where(x => !x.Deleted).ToListAsync();
+    }
+    
+    public async Task<T?> GetDeletedByIdAsync(Guid id)
+    {
+        return await _dbSet.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(x => x.Deleted && x.Id == id);
     }
 
     public async Task<IEnumerable<T>> GetAllActiveAsync()

@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stockr.Tests", "Stockr.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stockr.UnitTests", "Stockr.Tests\Stockr.UnitTests\Stockr.UnitTests.csproj", "{DFD6B40E-2783-4CBC-BE3A-B874273C80FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stockr.IntegrationTests", "Stockr.Tests\Stockr.IntegrationTests\Stockr.IntegrationTests.csproj", "{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,11 +87,24 @@ Global
 		{DFD6B40E-2783-4CBC-BE3A-B874273C80FC}.Release|x64.Build.0 = Release|Any CPU
 		{DFD6B40E-2783-4CBC-BE3A-B874273C80FC}.Release|x86.ActiveCfg = Release|Any CPU
 		{DFD6B40E-2783-4CBC-BE3A-B874273C80FC}.Release|x86.Build.0 = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|x64.Build.0 = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Debug|x86.Build.0 = Debug|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|x64.ActiveCfg = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|x64.Build.0 = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{DFD6B40E-2783-4CBC-BE3A-B874273C80FC} = {8EA346BE-671F-0002-05BE-288298F0B05E}
+		{D0C2950E-7D6F-4CCC-9846-28D0F8FFA1EE} = {8EA346BE-671F-0002-05BE-288298F0B05E}
 	EndGlobalSection
 EndGlobal
